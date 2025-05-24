@@ -33,7 +33,7 @@ class PostListView(APIView):
 
     def get(self, request):
         post_obj = Post.objects.all()
-        serializer = self.serializer_class(post_obj, many=True)
+        serializer = self.serializer_class(post_obj, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -89,12 +89,12 @@ class PostDetailView(APIView):
 
     def get(self, request, pk):
         post_obj = self.model.objects.get(pk=pk)
-        serializer = self.serializer_class(post_obj)
+        serializer = self.serializer_class(post_obj, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, pk):
         post_obj = self.model.objects.get(pk=pk)
-        serializer = self.serializer_class(instance=post_obj, data=request.data)
+        serializer = self.serializer_class(instance=post_obj, data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -107,7 +107,8 @@ class PostDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, pk):
-        serializer = self.serializer_class(instance=self.model.objects.get(pk=pk), data=request.data, partial=True)
+        serializer = self.serializer_class(instance=self.model.objects.get(pk=pk), data=request.data, partial=True,
+                                           context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -151,12 +152,12 @@ class PostAPIActionViewSets(ViewSet):
 
     def list(self, request):
         post_obj = self.model.objects.all()
-        serializer = self.serializer_class(post_obj, many=True)
+        serializer = self.serializer_class(post_obj, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request):
         data = request.data
-        serializer = self.serializer_class(data=data)
+        serializer = self.serializer_class(data=data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -165,7 +166,7 @@ class PostAPIActionViewSets(ViewSet):
 
     def update(self, request, pk):
         instance = self.model.objects.get(pk=pk)
-        serializer = self.serializer_class(instance=instance, data=request.data)
+        serializer = self.serializer_class(instance=instance, data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -174,12 +175,13 @@ class PostAPIActionViewSets(ViewSet):
 
     def retrieve(self, request, pk):
         obj = self.model.objects.get(pk=pk)
-        serializer = self.serializer_class(obj)
+        serializer = self.serializer_class(obj, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, pk):
         instance = self.model.objects.get(pk=pk)
-        serializer = self.serializer_class(instance=instance, data=request.data, partial=True)
+        serializer = self.serializer_class(instance=instance, data=request.data, partial=True,
+                                           context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

@@ -6,7 +6,7 @@ router = DefaultRouter()
 router.register(r'posts', PostAPIActionViewSets, basename='post')
 urlpatterns = [
     path('postlist/', PostListView.as_view(), name='post-list'),
-    path('postdetial/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+    path('postdetail/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
     path('', include(router.urls)),
 
 ]

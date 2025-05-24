@@ -1,6 +1,6 @@
 from django.db import models
 from accounts.models import User
-
+from django.urls import reverse
 # Create your models here.
 class Post(models.Model):
     """
@@ -21,6 +21,13 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+
+    def get_snippet(self):
+        return self.content[:10]
+
+    def get_absolute_api_url(self):
+        return reverse('post-detail',args=[self.pk])
 
 
 class Category(models.Model):

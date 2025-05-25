@@ -5,8 +5,8 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'posts', PostAPIActionViewSets, basename='post')
 urlpatterns = [
-    path('postlist/', PostListView.as_view(), name='post-list'),
-    path('postdetail/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+    path('post/', PostListView.as_view(), name='post-list'),
+    path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
     path('', include(router.urls)),
 
 ]

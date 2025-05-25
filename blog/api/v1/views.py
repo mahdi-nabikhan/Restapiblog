@@ -4,6 +4,10 @@ from rest_framework.views import APIView
 from .serializers import *
 from blog.models import *
 from rest_framework.viewsets import ViewSet
+from .permissions import *
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+from .paginations import DefaultPagination
 
 
 class PostListView(APIView):
@@ -30,6 +34,11 @@ class PostListView(APIView):
         """
 
     serializer_class = PostSerializer
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_fields = ['title', 'auther']
+    search_fields = ['title', 'content']
+    ordering_fields = 'title'
+    pagination_class = DefaultPagination
 
     def get(self, request):
         post_obj = Post.objects.all()
@@ -86,6 +95,10 @@ class PostDetailView(APIView):
 
     serializer_class = PostSerializer
     model = Post
+    permission_classes = (IsOwnerOrReadOnly,)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_fields = ['title', 'auther']
+    ordering_fields = 'title'
 
     def get(self, request, pk):
         post_obj = self.model.objects.get(pk=pk)
@@ -149,6 +162,12 @@ class PostAPIActionViewSets(ViewSet):
         """
     serializer_class = PostSerializer
     model = Post
+    permission_classes = (IsOwnerOrReadOnly,)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_fields = ['title', 'auther']
+    search_filters = ['title', 'content']
+    ordering_fields = 'title'
+    pagination_class = DefaultPagination
 
     def list(self, request):
         post_obj = self.model.objects.all()

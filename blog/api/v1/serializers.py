@@ -63,7 +63,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['title', 'content', 'auther', 'snippet', 'status', 'created_date', 'relative_url']
+        fields = ['title', 'content', 'auther', 'snippet', 'status', 'created_date', 'relative_url','absolute_url']
         read_only_fields = ('auther',)
 
     def create(self, validated_data):
@@ -72,10 +72,17 @@ class PostSerializer(serializers.ModelSerializer):
         return Post.objects.create(**validated_data)
 
     def to_representation(self, instance):
+        request=self.context.get('request')
         result = super(PostSerializer, self).to_representation(instance)
+        if request.parser_context.get('kwargs').get('pk'):
+            result.pop('snippet')
+            result.pop('absolute_url')
+            result.pop('relative_url')
+        else:
+            result.pop('content')
         result['category'] = CategorySerializer(instance.category).data
         return result
 
     def get_absolute_url(self, instance):
         request = self.context.get('request')
-        return request.build_absolute_uri(instance.get_absolute_url())
+        return request.build_absolute_uri(instance.pk)

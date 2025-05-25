@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from .serializers import *
 from blog.models import *
 from rest_framework.viewsets import ViewSet
@@ -10,7 +11,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from .paginations import DefaultPagination
 
 
-class PostListView(APIView):
+class PostListView(GenericAPIView):
     """
         get:
         Return a list of all blog posts.
@@ -39,9 +40,10 @@ class PostListView(APIView):
     search_fields = ['title', 'content']
     ordering_fields = 'title'
     pagination_class = DefaultPagination
+    queryset = Post.objects.all()
 
     def get(self, request):
-        post_obj = Post.objects.all()
+        post_obj =self.get_queryset()
         serializer = self.serializer_class(post_obj, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -55,7 +57,7 @@ class PostListView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PostDetailView(APIView):
+class PostDetailView(GenericAPIView):
     """
        get:
        Retrieve a single post by its ID.
@@ -99,6 +101,7 @@ class PostDetailView(APIView):
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_fields = ['title', 'auther']
     ordering_fields = 'title'
+    queryset = Post.objects.all()
 
     def get(self, request, pk):
         post_obj = self.model.objects.get(pk=pk)

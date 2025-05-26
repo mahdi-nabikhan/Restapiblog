@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 from accounts.models import *
@@ -5,7 +7,7 @@ from django.contrib.auth.password_validation import validate_password
 from accounts.models import User
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
-
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 
 
@@ -88,3 +90,28 @@ class CustomAuthTokenSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+
+
+class CustomObtainPairSerializer(TokenObtainPairSerializer):
+
+    def validate(self, attrs):
+        validated_data = super().validate(attrs)
+        validated_data['email'] = self.user.email
+        validated_data['user_id'] = self.user.id
+        return validated_data
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(max_length=255, required=True)
+    new_password = serializers.CharField(max_length=255, required=True)
+    new_password1 = serializers.CharField(max_length=255, required=True)
+
+    def validate(self, data):
+        if data['new_password'] != data['new_password1']:
+            raise serializers.ValidationError({'password': 'Passwords do not match'})
+
+        try:
+            validate_password(data.get('new_password'))
+        except ValidationError as e:
+            raise serializers.ValidationError({'password': e.messages})  # `e.messages` is a list
+        return data

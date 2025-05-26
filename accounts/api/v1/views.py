@@ -2,10 +2,11 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, UpdateAPIView
 from .serializers import *
 from rest_framework.authtoken import views
 from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 class RegisterView(GenericAPIView):
@@ -103,3 +104,29 @@ class CustomDiscardAuthToken(views.APIView):
     def post(self, request):
         request.user.auth_token.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CustomTokenPairView(TokenObtainPairView):
+    serializer_class = CustomObtainPairSerializer
+
+
+class ChangePasswordView(UpdateAPIView):
+    model = User
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ChangePasswordSerializer
+
+    def get_object(self):
+        obj = self.request.user
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            if not self.object.check_password(serializer.data.get('old_password')):
+                return Response({'old password': 'your password is wrong'}, status=status.HTTP_400_BAD_REQUEST)
+            self.object.set_password(serializer.data.get('new_password'))
+            self.object.save()
+            return Response({'massage':'password changed successfully'},status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors)

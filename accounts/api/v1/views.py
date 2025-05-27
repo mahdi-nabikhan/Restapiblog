@@ -1,8 +1,9 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView, UpdateAPIView
+from rest_framework.generics import GenericAPIView, UpdateAPIView, RetrieveUpdateAPIView
 from .serializers import *
 from rest_framework.authtoken import views
 from rest_framework.authtoken.models import Token
@@ -127,6 +128,15 @@ class ChangePasswordView(UpdateAPIView):
                 return Response({'old password': 'your password is wrong'}, status=status.HTTP_400_BAD_REQUEST)
             self.object.set_password(serializer.data.get('new_password'))
             self.object.save()
-            return Response({'massage':'password changed successfully'},status=status.HTTP_200_OK)
+            return Response({'massage': 'password changed successfully'}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors)
+
+
+class ProfileApiView(RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    queryset = Profile.objects.all()
+
+    def get_queryset(self):
+        obj = get_object_or_404(Profile, pk=self.request.user.pk)
+        return obj

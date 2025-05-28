@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -8,6 +9,7 @@ from .serializers import *
 from rest_framework.authtoken import views
 from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.views import TokenObtainPairView
+from django.core.mail import send_mail
 
 
 class RegisterView(GenericAPIView):
@@ -140,3 +142,16 @@ class ProfileApiView(RetrieveUpdateAPIView):
     def get_queryset(self):
         obj = get_object_or_404(Profile, pk=self.request.user.pk)
         return obj
+
+
+class SendEmailView(GenericAPIView):
+
+    def get(self, request,*args,**kwargs):
+        send_mail(
+            subject='Test Email',
+            message='This is a test email from Django to smtp4dev.',
+            from_email='test@example.com',
+            recipient_list=['recipient@example.com'],
+            fail_silently=False
+        )
+        return Response({'massage': 'email send successfully '})

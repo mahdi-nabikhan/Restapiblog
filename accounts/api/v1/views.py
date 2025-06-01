@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.shortcuts import get_object_or_404
+from mail_templated import EmailMessage
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -10,7 +11,9 @@ from rest_framework.authtoken import views
 from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.core.mail import send_mail
-
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from accounts.api.v1.utils import *
 
 class RegisterView(GenericAPIView):
     """
@@ -146,7 +149,7 @@ class ProfileApiView(RetrieveUpdateAPIView):
 
 class SendEmailView(GenericAPIView):
 
-    def get(self, request,*args,**kwargs):
+    def get(self, request, *args, **kwargs):
         send_mail(
             subject='Test Email',
             message='This is a test email from Django to smtp4dev.',
@@ -155,3 +158,16 @@ class SendEmailView(GenericAPIView):
             fail_silently=False
         )
         return Response({'massage': 'email send successfully '})
+
+
+def send_mail_with_template(template_name, context, from_email, recipient_list):
+    subject = 'Your Subject'
+    message = render_to_string(template_name, context)
+    send_mail(subject, message, from_email, recipient_list)
+
+class SendEmailApiView(GenericAPIView):
+
+    def get(self, request, *args, **kwargs):
+        message= EmailMessage('email/hello.tpl',{'name':'mmd'},'asus@gmail.com',to=['mmd@gmail.com'])
+        EmailThread(message).start()
+        return Response({'message': 'email sent'})

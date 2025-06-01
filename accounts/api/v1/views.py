@@ -22,7 +22,7 @@ from django.conf import settings
 User = get_user_model()
 
 
-class RegisterView(GenericAPIView):
+class SendTokenActivationRegisterView(GenericAPIView):
     """
         RegisterView handles user registration.
 
@@ -85,6 +85,51 @@ class RegisterView(GenericAPIView):
                                          context={'token': refresh}
                                          )
             email_message.send()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RegisterView(GenericAPIView):
+    """
+        RegisterView handles user registration.
+
+        POST /accounts/api/v1/register/
+        -------------------------------
+        This endpoint allows a new user to register with email and password.
+
+        Request data (JSON):
+        {
+            "email": "user@example.com",
+            "password": "strong_password",
+            "password2": "strong_password"
+        }
+
+        Response (201 Created):
+        {
+            "email": "user@example.com"
+        }
+
+        Response (400 Bad Request):
+        {
+            "password": ["This field is required."],
+            "password2": ["Passwords do not match."]
+        }
+        """
+    serializer_class = UserRegistrationSerializer
+
+    def post(self, request):
+        """
+                Handle POST request to register a new user.
+                Validates the input data using UserRegistrationSerializer.
+                On success, saves the user and returns serialized user data.
+                On failure, returns validation errors.
+        """
+        data = request.data
+        serializer = self.serializer_class(data=data)
+        if serializer.is_valid():
+            serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

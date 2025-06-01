@@ -24,39 +24,51 @@ User = get_user_model()
 
 class SendTokenActivationRegisterView(GenericAPIView):
     """
-        RegisterView handles user registration.
+        SendTokenActivationRegisterView handles user registration with email verification via a JWT token.
 
-        POST /accounts/api/v1/register/
-        -------------------------------
-        This endpoint allows a new user to register with email and password.
+        This endpoint registers a new user and sends a JWT access token to their email for account activation.
 
-        Request data (JSON):
+        POST /accounts/api/v1/register/send-token/
+        ------------------------------------------
+
+        ### Request Body (JSON)
         {
             "email": "user@example.com",
             "password": "strong_password",
             "password2": "strong_password"
         }
 
-        Response (201 Created):
+        ### Successful Response (201 Created)
         {
             "email": "user@example.com"
         }
 
-        Response (400 Bad Request):
+        ### Error Response (400 Bad Request)
         {
-            "password": ["This field is required."],
-            "password2": ["Passwords do not match."]
+            "password2": ["Passwords do not match."],
+            "email": ["This field must be unique."]
         }
+
+        ### Email Sent
+        An activation email will be sent to the provided email address containing a JWT access token.
         """
     serializer_class = UserRegistrationSerializer
 
     def post(self, request):
         """
-                Handle POST request to register a new user.
-                Validates the input data using UserRegistrationSerializer.
-                On success, saves the user and returns serialized user data.
-                On failure, returns validation errors.
-        """
+                Handles the user registration and sends an activation token via email.
+
+                - Validates the registration data using UserRegistrationSerializer.
+                - If the data is valid:
+                    - Creates the user.
+                    - Generates a JWT token.
+                    - Sends an activation email using a template and includes the token in the email context.
+                - Returns appropriate success or error responses.
+
+                Returns:
+                    - 201 Created with user data if registration is successful.
+                    - 400 Bad Request with validation errors if data is invalid.
+                """
         data = request.data
         serializer = self.serializer_class(data=data)
         if serializer.is_valid():
@@ -181,27 +193,133 @@ class CustomObtainToken(views.ObtainAuthToken):
 
 
 class CustomDiscardAuthToken(views.APIView):
+    """
+        CustomDiscardAuthToken handles the logout process by deleting the user's authentication token.
+
+        This endpoint is used to log out an authenticated user by invalidating (deleting) their token.
+
+        POST /accounts/api/v1/custom/token/logout/
+        -------------------------------------------
+
+        ### Authentication Required:
+        - Yes (Token-based)
+
+        ### Request Headers:
+        Authorization: Token <user_token>
+
+        ### Request Body:
+        - None
+
+        ### Successful Response (204 No Content):
+        - Indicates the token was successfully deleted and the user is logged out.
+
+        ### Error Response:
+        - 401 Unauthorized: If the request does not include a valid authentication token.
+        """
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
+        """
+                Handle POST request to log out the user by deleting their authentication token.
+
+                - Requires the user to be authenticated.
+                - Deletes the current user's token from the database.
+                - Returns a 204 No Content response on success.
+
+                Returns:
+                    - 204 No Content on success.
+                    - 401 Unauthorized if the user is not authenticated.
+                """
         request.user.auth_token.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CustomTokenPairView(TokenObtainPairView):
+    """
+        CustomTokenPairView provides JWT access and refresh tokens for authenticated users.
+
+        This endpoint is used for logging in with email and password to obtain JWT tokens.
+
+        POST /accounts/api/v1/custom/token/
+        -----------------------------------
+
+        ### Request Body (JSON):
+        {
+            "email": "user@example.com",
+            "password": "user_password"
+        }
+
+        ### Successful Response (200 OK):
+        {
+            "refresh": "your_refresh_token",
+            "access": "your_access_token"
+        }
+
+        ### Error Response (401 Unauthorized):
+        {
+            "detail": "No active account found with the given credentials"
+        }
+
+        ### Notes:
+        - This view uses a custom serializer `CustomObtainPairSerializer` to customize login logic or token payload if needed.
+        - It is based on `TokenObtainPairView` from `rest_framework_simplejwt.views`.
+        """
     serializer_class = CustomObtainPairSerializer
 
 
 class ChangePasswordView(UpdateAPIView):
+    """
+               ChangePasswordView allows an authenticated user to change their password.
+
+               This endpoint requires the user to provide their current password and a new password.
+
+               PUT /accounts/api/v1/change-password/
+               --------------------------------------
+
+               ### Authentication Required:
+               - Yes (JWT or Token)
+
+               ### Request Body (JSON):
+               {
+                   "old_password": "current_password",
+                   "new_password": "new_secure_password"
+               }
+
+               ### Successful Response (200 OK):
+               {
+                   "message": "Password changed successfully"
+               }
+
+               ### Error Responses:
+               - 400 Bad Request: If the old password is incorrect or validation fails.
+               {
+                   "old_password": "Your password is wrong"
+               }
+
+               ### Notes:
+               - Only the authenticated user can change their own password.
+               - Validation and password hashing are handled via the serializer and Django's built-in methods.
+               """
     model = User
     permission_classes = (IsAuthenticated,)
     serializer_class = ChangePasswordSerializer
 
     def get_object(self):
+
+        """Returns the current authenticated user object."""
         obj = self.request.user
         return obj
 
     def update(self, request, *args, **kwargs):
+        """
+                Handle PUT request to change the authenticated user's password.
+
+                Validates the old password and updates the password to the new one if valid.
+
+                Returns:
+                    - 200 OK on success
+                    - 400 Bad Request on validation failure
+                """
         self.object = self.get_object()
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
@@ -215,15 +333,88 @@ class ChangePasswordView(UpdateAPIView):
 
 
 class ProfileApiView(RetrieveUpdateAPIView):
+    """
+        ProfileApiView allows an authenticated user to retrieve and update their profile.
+
+        GET /accounts/api/v1/profile/
+        PUT /accounts/api/v1/profile/
+
+        --------------------------------------
+
+        ### Authentication Required:
+        - Yes (JWT or Token)
+
+        ### GET Response (200 OK):
+        {
+            "id": 1,
+            "user": 3,
+            "bio": "About me...",
+            "location": "City, Country",
+            ...
+        }
+
+        ### PUT Request Body (JSON):
+        {
+            "bio": "Updated bio",
+            "location": "New Location"
+        }
+
+        ### Successful PUT Response (200 OK):
+        {
+            "id": 1,
+            "user": 3,
+            "bio": "Updated bio",
+            "location": "New Location"
+        }
+
+        ### Error Response (404 Not Found):
+        {
+            "detail": "Not found."
+        }
+
+        ### Notes:
+        - This view uses `RetrieveUpdateAPIView` to support both reading and editing the profile.
+        - The `get_queryset` method ensures users can only access or update their own profile.
+        """
     serializer_class = ProfileSerializer
     queryset = Profile.objects.all()
 
     def get_queryset(self):
+        """
+                Override the default queryset to return only the current user's profile.
+                """
         obj = get_object_or_404(Profile, pk=self.request.user.pk)
         return obj
 
 
 class SendEmailView(GenericAPIView):
+    """
+        SendEmailView sends a test email to verify SMTP configuration (e.g., smtp4dev).
+
+        GET /accounts/api/v1/send/email/
+
+        --------------------------------------
+
+        ### Purpose:
+        This endpoint is used for testing the email sending functionality.
+        It sends a plain test email to a predefined recipient using Django’s email backend.
+
+        ### Authentication Required:
+        - No
+
+        ### Successful Response (200 OK):
+        {
+            "message": "email sent successfully"
+        }
+
+        ### Example Use Case:
+        - Verifying that your SMTP service (like smtp4dev or Mailhog) is working correctly.
+        - Useful during development to test email delivery.
+
+        ### Notes:
+        - The email content and recipients are hardcoded.
+        - Make sure your SMTP settings (EMAIL_HOST, EMAIL_PORT, etc.) are correctly configured in `settings.py`.
+        """
 
     def get(self, request, *args, **kwargs):
         send_mail(
@@ -309,6 +500,44 @@ class SendEmailApiView(GenericAPIView):
 
 
 class ActivationApiView(APIView):
+    """
+        ActivationApiView handles user account activation via a JWT token.
+
+        GET /accounts/api/v1/activation/confirm/<token>/
+
+        --------------------------------------------------
+
+        ### Purpose:
+        This endpoint is used to verify and activate a newly registered user's account using a JWT token sent via email.
+
+        ### Parameters:
+        - token (str): A JWT token included in the URL. This token must contain a valid `user_id` payload.
+
+        ### Process:
+        1. The token is decoded using the project’s SECRET_KEY.
+        2. If the token is valid and not expired, the user is retrieved using the ID from the token.
+        3. The user's `is_verified` field is set to `True`.
+        4. Returns a message indicating successful activation.
+
+        ### Possible Responses:
+        - 200 OK: Account successfully activated.
+          ```json
+          { "detail": "user has been activated" }
+          ```
+        - 400 Bad Request: If the token is invalid or expired.
+          ```json
+          { "detail": "invalid token" }
+          ```
+          or
+          ```json
+          { "detail": "token has been expired" }
+          ```
+
+        ### Notes:
+        - Make sure the token you generate during registration includes the `user_id`.
+        - Ensure `is_verified` is a valid field in your User model.
+        """
+
     def get(self, request, token, *args, **kwargs):
         try:
             token = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
@@ -326,6 +555,45 @@ class ActivationApiView(APIView):
 
 
 class ActivationResendApiView(APIView):
+    """
+       ActivationResendApiView handles resending the JWT activation token to the user's email.
+
+       POST /accounts/api/v1/activation/resend/
+       ----------------------------------------
+
+       ### Purpose:
+       Allows a user to request a new activation token via email if the original one was lost, expired, or never received.
+
+       ### Request Body (JSON):
+       {
+           "email": "user@example.com"
+       }
+
+       ### Process:
+       1. Validates the provided email using the `ActivationResendSerializer`.
+       2. If valid, generates a new refresh and access token for the associated user.
+       3. Sends an email to the user with the activation token included in the message body and/or template context.
+
+       ### Successful Response (200 OK):
+       ```json
+       {
+           "message": "Token resent to your email"
+       }
+       ```
+
+       ### Error Response (400 Bad Request):
+       If the email is missing or invalid:
+       ```json
+       {
+           "detail": "email is empty"
+       }
+       ```
+
+       ### Notes:
+       - Ensure the `ActivationResendSerializer` properly validates the email and returns the associated user instance.
+       - The email is rendered using the template `email/activation_email.tpl`. Make sure this file exists and is properly configured.
+       - Tokens are generated using `RefreshToken.for_user(user)`.
+       """
     serializer_class = ActivationResendSerializer
 
     def post(self, request, *args, **kwargs):

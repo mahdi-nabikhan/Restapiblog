@@ -15,6 +15,8 @@ urlpatterns = [
     path('change/password', ChangePasswordView.as_view(), name='change-password'),
     path('profile/', ProfileApiView.as_view(), name='profile'),
     path('send/email/', SendEmailView.as_view(), name='send-email'),
-    path('send/email/template/',SendEmailApiView.as_view(),name='send_templated_email')
+    path('send/email/template/',SendEmailApiView.as_view(),name='send_templated_email'),
+    path('activation/confirm/<str:token>/',ActivationApiView.as_view(),name='activation-confirm'),
+
 
 ]

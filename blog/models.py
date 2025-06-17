@@ -27,7 +27,7 @@ class Post(models.Model):
         return self.content[:10]
 
     def get_absolute_api_url(self):
-        return reverse('post-detail',args=[self.pk])
+        return reverse('blog:api:post-detail',args=[self.pk])
 
 
 class Category(models.Model):

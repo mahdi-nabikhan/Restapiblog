@@ -12,12 +12,10 @@ from rest_framework.authtoken import views
 from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.core.mail import send_mail
-from django.core.mail import send_mail
 from django.template.loader import render_to_string
-from accounts.api.v1.utils import *
+from accounts.tasks import *
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
-from django.conf import settings
 
 User = get_user_model()
 
@@ -78,7 +76,7 @@ class SendTokenActivationRegisterView(GenericAPIView):
             # Generate JWT tokens for the user
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
-
+            send_activation_email.delay(user.email, user.username, access_token)
             # Prepare email message content
             message_body = f"""
                     Hello {user.email},
@@ -477,12 +475,12 @@ class SendEmailApiView(GenericAPIView):
         """
 
         # Send the email
-        email_message = EmailMessage('email/hello.tpl',
+        email_message = EmailMessage(template_name='email/hello.tpl',
                                      subject="Your Access Token",
-                                     body=message_body,
+
                                      from_email="noreply@example.com",
                                      to=[email],
-                                     context={'token': refresh}
+                                     context={'token': refresh, 'user': request.user, 'access_token': access_token}
                                      )
         email_message.send()
 
@@ -554,82 +552,65 @@ class ActivationApiView(APIView):
         return Response(data={'detail': 'user has been activated'}, status=status.HTTP_200_OK)
 
 
-class ActivationResendApiView(APIView):
+class ActivationResendApiView(GenericAPIView):
     """
-       ActivationResendApiView handles resending the JWT activation token to the user's email.
+           ActivationResendApiView handles resending the JWT activation token to the user's email.
 
-       POST /accounts/api/v1/activation/resend/
-       ----------------------------------------
+           POST /accounts/api/v1/activation/resend/
+           ----------------------------------------
 
-       ### Purpose:
-       Allows a user to request a new activation token via email if the original one was lost, expired, or never received.
+           ### Purpose:
+           Allows a user to request a new activation token via email if the original one was lost, expired, or never received.
 
-       ### Request Body (JSON):
-       {
-           "email": "user@example.com"
-       }
+           ### Request Body (JSON):
+           {
+               "email": "user@example.com"
+           }
 
-       ### Process:
-       1. Validates the provided email using the `ActivationResendSerializer`.
-       2. If valid, generates a new refresh and access token for the associated user.
-       3. Sends an email to the user with the activation token included in the message body and/or template context.
+           ### Process:
+           1. Validates the provided email using the `ActivationResendSerializer`.
+           2. If valid, generates a new refresh and access token for the associated user.
+           3. Sends an email to the user with the activation token included in the message body and/or template context.
 
-       ### Successful Response (200 OK):
-       ```json
-       {
-           "message": "Token resent to your email"
-       }
-       ```
+           ### Successful Response (200 OK):
+           ```json
+           {
+               "message": "Token resent to your email"
+           }
+           ```
 
-       ### Error Response (400 Bad Request):
-       If the email is missing or invalid:
-       ```json
-       {
-           "detail": "email is empty"
-       }
-       ```
+           ### Error Response (400 Bad Request):
+           If the email is missing or invalid:
+           ```json
+           {
+               "detail": "email is empty"
+           }
+           ```
 
-       ### Notes:
-       - Ensure the `ActivationResendSerializer` properly validates the email and returns the associated user instance.
-       - The email is rendered using the template `email/activation_email.tpl`. Make sure this file exists and is properly configured.
-       - Tokens are generated using `RefreshToken.for_user(user)`.
-       """
+           ### Notes:
+           - Ensure the `ActivationResendSerializer` properly validates the email and returns the associated user instance.
+           - The email is rendered using the template `email/activation_email.tpl`. Make sure this file exists and is properly configured.
+           - Tokens are generated using `RefreshToken.for_user(user)`.
+           """
     serializer_class = ActivationResendSerializer
 
     def post(self, request, *args, **kwargs):
-        email = request.data.get('email')
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             user = serializer.validated_data.get('user')
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
 
-            # Prepare email message content
-            message_body = f"""
-                               Hello {user},
-
-                               Here is your JWT access token:
-                               {access_token}
-
-                               If you did not request this, please ignore this email.
-                               """
-
-            # Send the email
-            email_message = EmailMessage('email/activation_email.tpl',
-                                         subject="Your Access Token",
-                                         from_email="noreply@example.com",
-                                         to=[serializer.validated_data.get('email')],
-                                         context={'token': refresh}
-                                         )
-            email_message.send()
-            return Response({'message': 'Token resent to your email'}, status=status.HTTP_200_OK)
+            try:
+                send_activation_email.delay(user.email, user.email, access_token)
+                return Response({'message': 'Token resent to your email'}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({'detail': f'Failed to queue email task: {str(e)}'},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
-            return Response(data={'detail': 'email is empty'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'email is empty'}, status=status.HTTP_400_BAD_REQUEST)
 
     def get_tokens_for_user(self, user):
-        """
-        Generate and return both refresh and access tokens for a given user.
-        """
         refresh = RefreshToken.for_user(user)
         return {
             'refresh': str(refresh),

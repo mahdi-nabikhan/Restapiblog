@@ -1,6 +1,15 @@
 version: '3.9'
 
 services:
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+
+
+
   backend:
     build: .
     container_name: backend
@@ -12,6 +21,8 @@ services:
     environment:
       - SECRET_KEY=test
       - DEBUG=True
+    depends_on:
+      - redis
 
   smtp4dev:
     image: rnwood/smtp4dev:v3
@@ -26,6 +37,14 @@ services:
     environment:
       - ServerOptions__Urls=http://*:80
       - ServerOptions__HostName=smtp4dev
+  worker:
+    build: .
+    command: celery -A RestApiBlog worker --loglevel=info
+    depends_on:
+      - redis
+      - backend
+    volumes:
+      - .:/app
 
 volumes:
   smtp4dev-data:

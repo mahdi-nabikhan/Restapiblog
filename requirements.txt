@@ -1,2 +1,34 @@
+
+#general
 django >3.2,<3.3
 python-decouple >3.5
+Pillow
+djangorestframework
+
+#third party modules
+markdown
+django-filter
+drf-yasg[validation]
+djangorestframework-simplejwt
+
+
+#deployment module
+gunicorn
+
+
+
+#email thrid party modules
+django-mail-templated
+
+
+#refactoring and tests
+black
+flake8
+pytest
+pytest-django
+Faker
+
+# background proccess and cache
+celery
+redis
+django-redis

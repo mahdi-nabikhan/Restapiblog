@@ -13,6 +13,7 @@ djangorestframework-simplejwt
 
 
 #deployment module
+gunicorn
 
 
 
@@ -30,3 +31,4 @@ Faker
 # background proccess and cache
 celery
 redis
+django-redis

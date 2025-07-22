@@ -13,17 +13,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Docker Compose
-      run: docker-compose build
+    - name: Build Docker containers
+      run: docker compose build
 
-    - name: Start services
-      run: docker-compose up -d
+    - name: Start Docker containers
+      run: docker compose up -d
 
     - name: Wait for backend to be ready
       run: |
         for i in {1..30}; do
-          if docker exec backend curl -s http://localhost:8000/ > /dev/null; then
-            echo "Backend is up!"
+          if docker ps | grep backend; then
+            echo "Backend container is running."
             break
           fi
           echo "Waiting for backend..."

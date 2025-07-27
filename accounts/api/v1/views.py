@@ -138,7 +138,8 @@ class RegisterView(GenericAPIView):
         data = request.data
         serializer = self.serializer_class(data=data)
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
+            token = Token.objects.create(user=user)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:

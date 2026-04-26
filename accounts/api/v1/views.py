@@ -1,7 +1,7 @@
 import jwt
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-from mail_templated import EmailMessage
+# from mail_templated import EmailMessage
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView

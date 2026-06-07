@@ -1,0 +1,124 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 15px 30px;
+
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* LOGO */
+.navbar__logo h2 {
+  color: #111827;
+}
+
+/* LINKS */
+.navbar__links {
+  display: flex;
+  gap: 25px;
+}
+
+.navbar__links a {
+  text-decoration: none;
+  color: #374151;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.navbar__links a:hover {
+  color: #2563eb;
+}
+
+/* AUTH BUTTONS */
+.navbar__auth {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login {
+  background: transparent;
+  border: 1px solid #2563eb;
+  color: #2563eb;
+}
+
+.login:hover {
+  background: #2563eb;
+  color: white;
+}
+
+.register {
+  background: #2563eb;
+  color: white;
+}
+
+.register:hover {
+  background: #1e40af;
+}
+
+/* HAMBURGER */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background: #111827;
+  border-radius: 5px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .navbar__links {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+
+    flex-direction: column;
+    background: white;
+
+    padding: 20px;
+
+    display: none;
+  }
+
+  .navbar__links.active {
+    display: flex;
+  }
+
+  .navbar__auth {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+}

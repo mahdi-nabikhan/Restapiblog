@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-from decouple import config
+# from decouple import config
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-8f@1$(a-8y!lfd7db=oo&k0^29ebu$wgg)qfv)s!@)a!1lz^a%
 DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.split() for s in v.split(',')],
-                       default='*')
+# ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.split() for s in v.split(',')],
+                    #    default='*')
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,11 +39,12 @@ INSTALLED_APPS = [
     'accounts',
     'blog',
     'rest_framework',
-    'django_filters',
+    #'django_filters',
     'drf_yasg',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
-    'mail_templated'
+    #'mail_templated',
+    'corsheaders'
 
 ]
 
@@ -55,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'RestApiBlog.urls'
@@ -157,12 +159,13 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 # caching config
-CACHES ={
-    'default':{
-        'BACKEND':'django_redis.cache.RedisCache',
-        'LOCATION':'redis://127.0.0.1:6379/2',
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/2',
         'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis/client.DefaultClient'
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
     }
 }
+CORS_ALLOW_ALL_ORIGINS = True

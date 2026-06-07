@@ -1,7 +1,7 @@
 import jwt
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-from mail_templated import EmailMessage
+# from mail_templated import EmailMessage
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -138,7 +138,8 @@ class RegisterView(GenericAPIView):
         data = request.data
         serializer = self.serializer_class(data=data)
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
+            token = Token.objects.create(user=user)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
@@ -263,6 +264,22 @@ class CustomTokenPairView(TokenObtainPairView):
         - It is based on `TokenObtainPairView` from `rest_framework_simplejwt.views`.
         """
     serializer_class = CustomObtainPairSerializer
+    
+    
+    def post (self, request):
+        data = request.data
+        serializer=self.serializer_class(data=data)
+        if serializer.is_valid():
+            access_token=serializer.validated_data['access']
+            refresh_token=serializer.validated_data['refresh']
+            response= Response(data={'message':'user loggin successfuly' ,
+                                     'access token ':access_token,
+                                     'refresh token':refresh_token},status=status.HTTP_200_OK)
+            response.set_cookie('access',access_token,max_age=60,samesite="Lax",secure=True )
+            response.set_cookie('refresh',refresh_token,max_age=60*60*24,samesite="Lax",secure=True )
+            return response
+        else:
+            return Response({'message':'failed on login'},status=status.HTTP_404_NOT_FOUND)
 
 
 class ChangePasswordView(UpdateAPIView):

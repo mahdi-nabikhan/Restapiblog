@@ -52,7 +52,7 @@ export default function PostDetail() {
 
           <div className="post-meta">
             <span>
-              Category: <b>{post.category || "Uncategorized"}</b>
+              Category: <b>{post.category.title || "Uncategorized"}</b>
             </span>
             <span>
               Status: <b>{post.status ? "Published" : "Draft"}</b>

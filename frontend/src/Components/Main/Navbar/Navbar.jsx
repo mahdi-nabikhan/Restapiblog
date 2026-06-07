@@ -1,27 +1,33 @@
-import React from 'react'
-import './Navbar.css'
+import React, { useState } from "react";
+import "./Navbar.css";
 
 export default function Navbar() {
-    return (
-        <div>
+  const [open, setOpen] = useState(false);
 
-            <nav className="navbar">
-                <div className="navbar__logo">
-                    <h2>MyBlog</h2>
-                </div>
+  return (
+    <nav className="navbar">
+      <div className="navbar__logo">
+        <h2>MyBlog</h2>
+      </div>
 
-                <ul className="navbar__links">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/posts">Posts</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/contact">Contact</a></li>
-                </ul>
+      <div className={`navbar__links ${open ? "active" : ""}`}>
+        <a href="/">Home</a>
+        <a href="/posts">Posts</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+      </div>
 
-                <div className="navbar__auth">
-                    <button className="btn btn-login">Login</button>
-                    <button className="btn btn-register">Register</button>
-                </div>
-            </nav>
-        </div>
-    )
+      <div className="navbar__auth">
+        <button className="btn login">Login</button>
+        <button className="btn register">Register</button>
+      </div>
+
+      {/* hamburger */}
+      <div className="hamburger" onClick={() => setOpen(!open)}>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+  );
 }

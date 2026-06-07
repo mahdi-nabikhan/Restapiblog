@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./PostDetail.css";
 
+const DEFAULT_IMAGE = "/images/default_image.PNG";
+
 export default function PostDetail() {
   const { id } = useParams();
 
@@ -43,23 +45,44 @@ export default function PostDetail() {
   return (
     <div className="post-container">
       <div className="post-card">
-        {post.image && (
-          <img className="post-image" src={post.image} alt={post.title} />
-        )}
+        <div className="post-layout">
 
-        <div className="post-content">
-          <h1 className="post-title">{post.title}</h1>
+          {/* Image */}
+          <img
+            className="post-image"
+            src={post?.image || DEFAULT_IMAGE}
+            alt={post?.title || "Post image"}
+            onError={(e) => {
+              e.target.src = DEFAULT_IMAGE;
+            }}
+          />
 
-          <div className="post-meta">
-            <span>
-              Category: <b>{post.category.title || "Uncategorized"}</b>
-            </span>
-            <span>
-              Status: <b>{post.status ? "Published" : "Draft"}</b>
-            </span>
+          {/* Content */}
+          <div className="post-content">
+            <h1 className="post-title">{post.title}</h1>
+
+            <div className="post-meta">
+              <span>
+                Category: <b>{post.category?.name || "Uncategorized"}</b>
+              </span>
+              <span>
+                Status: <b>{post.status ? "Published" : "Draft"}</b>
+              </span>
+            </div>
+
+            <div className="post-dates">
+              <span>
+                Created:{" "}
+                {new Date(post.created_date).toLocaleDateString()}
+              </span>
+              <span>
+                Updated:{" "}
+                {new Date(post.updated_date).toLocaleDateString()}
+              </span>
+            </div>
+
+            <p className="post-text">{post.content}</p>
           </div>
-
-          <p className="post-text">{post.content}</p>
         </div>
       </div>
     </div>

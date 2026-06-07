@@ -1,3 +1,4 @@
+import Profile from "./Components/Panel/Profile/Profile"
 import MainLayout from "./Layouts/MainLayout"
 import ProfileLayout from "./Layouts/ProfileLayout"
 import Login from "./Pages/Login/Login"
@@ -13,6 +14,7 @@ const routes = [{
       ],
 },
 {path :'/panel',element:<ProfileLayout/>,children:[
+          {path:'profile',element:<Profile/>},
 
 ]}]
 

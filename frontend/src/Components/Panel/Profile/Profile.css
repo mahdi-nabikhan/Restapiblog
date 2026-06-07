@@ -1,0 +1,116 @@
+body {
+    background: #f3f4f6;
+  }
+  
+  .profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    min-height: 80vh;
+    padding: 20px;
+  }
+  
+  .profile-card {
+    width: 100%;
+    max-width: 450px;
+  
+    background: white;
+    border-radius: 16px;
+  
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  
+    padding: 25px;
+  }
+  
+  /* HEADER */
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+  
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #2563eb;
+  }
+  
+  .profile-info h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #111827;
+  }
+  
+  .profile-info p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+  }
+  
+  /* BODY */
+  .profile-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  
+    margin-bottom: 20px;
+  }
+  
+  .profile-item {
+    display: flex;
+    justify-content: space-between;
+  
+    padding: 10px 12px;
+    background: #f9fafb;
+    border-radius: 10px;
+  }
+  
+  .profile-item span {
+    color: #6b7280;
+    font-size: 13px;
+  }
+  
+  .profile-item p {
+    margin: 0;
+    font-weight: 500;
+    color: #111827;
+  }
+  
+  /* ACTIONS */
+  .profile-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  /* EDIT */
+  .edit {
+    background: #2563eb;
+    color: white;
+  }
+  
+  .edit:hover {
+    background: #1e40af;
+  }
+  
+  /* LOGOUT */
+  .logout {
+    background: #ef4444;
+    color: white;
+  }
+  
+  .logout:hover {
+    background: #b91c1c;
+  }

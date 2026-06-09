@@ -1,3 +1,4 @@
+import AddPosts from "./Components/AddPosts/AddPosts"
 import PostDetail from "./Components/Main/PostDetail/PostDetail"
 import Profile from "./Components/Panel/Profile/Profile"
 import MainLayout from "./Layouts/MainLayout"
@@ -13,7 +14,8 @@ const routes = [{
         { index: true, element: <Index/> },
         { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
-        {path:'post/:id',element:<PostDetailPages/>}
+        {path:'post/:id',element:<PostDetailPages/>},
+        {path:'add/post',element:<AddPosts/>}
       ],
 },
 {path :'/panel',element:<ProfileLayout/>,children:[

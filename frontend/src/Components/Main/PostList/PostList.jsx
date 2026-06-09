@@ -10,6 +10,7 @@ export default function PostList() {
       const res = await fetch(
         "http://localhost:8000/blog/api/v1/post/",
         {
+          credentials:'include',
           method: "GET",
         }
       );

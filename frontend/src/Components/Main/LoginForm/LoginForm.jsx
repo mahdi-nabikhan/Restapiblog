@@ -4,8 +4,10 @@ import "./LoginForm.css";
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const submitHandler = async (event) => {
     event.preventDefault();
@@ -13,9 +15,10 @@ export default function LoginForm() {
     try {
       setLoading(true);
       setError("");
+      setSuccess("");
 
       const res = await fetch(
-        "http://localhost:8000/account/api/v1/jwt/create/",
+        "http://localhost:8000/accounts/api/v1/jwt/custom/",
         {
           method: "POST",
           credentials: "include",
@@ -36,6 +39,12 @@ export default function LoginForm() {
       }
 
       console.log("Login success:", data);
+
+      setSuccess("Login successful 🎉 Welcome back!");
+
+      // optional: redirect
+      // navigate("/panel");
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -49,6 +58,8 @@ export default function LoginForm() {
         <h2 className="title">Welcome Back</h2>
 
         {error && <div className="error">{error}</div>}
+
+        {success && <div className="success">{success}</div>}
 
         <label>Email</label>
         <input

@@ -62,3 +62,58 @@
     line-height: 1.8;
     color: #444;
   }
+  .add-comment {
+    margin-top: 40px;
+    background: #fff;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  }
+  
+  .add-comment h3 {
+    margin-bottom: 15px;
+    color: #222;
+  }
+  
+  .add-comment__textarea {
+    width: 100%;
+    min-height: 140px;
+  
+    border: 1px solid #ddd;
+    border-radius: 12px;
+  
+    padding: 15px;
+  
+    font-size: 15px;
+    resize: vertical;
+  
+    outline: none;
+    transition: 0.3s;
+  }
+  
+  .add-comment__textarea:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  }
+  
+  .add-comment__btn {
+    margin-top: 15px;
+  
+    border: none;
+    cursor: pointer;
+  
+    background: #4f46e5;
+    color: white;
+  
+    padding: 12px 20px;
+    border-radius: 10px;
+  
+    font-size: 15px;
+    font-weight: 600;
+  
+    transition: 0.3s;
+  }
+  
+  .add-comment__btn:hover {
+    background: #4338ca;
+  }

@@ -94,10 +94,11 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ['pk','user','post','content','created_at','published','updated_at']
         read_only_fields = ('user','post')
         
-    def create(self,attrs):
+    def create(self,validated_data):
         request = self.context.get('request')
-        attrs['user']=request.user
-        return Comments.objects.create(**attrs)
+        validated_data['user']=request.user
+        
+        return Comments.objects.create(**validated_data)
     
     
 class CommentDetailSerializer(serializers.ModelSerializer):

@@ -8,7 +8,7 @@ export default function PostDetailPages() {
   return (
     <>
     <PostDetail id={id}/>
-    <Comments/>
+    <Comments id= {id}/>
     </>
     
   )

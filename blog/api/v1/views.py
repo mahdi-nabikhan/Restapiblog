@@ -11,6 +11,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from .paginations import DefaultPagination
 
 
+
 class PostListView(GenericAPIView):
     """
         get:
@@ -238,3 +239,26 @@ class CommentListAndCreateAPIView(GenericAPIView):
             return Response({'message':'comment successfuly added'},status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors,status=status.HTTP_404_NOT_FOUND)
+        
+        
+class CommentDetailAndDeleteAPIView(GenericAPIView):
+    serializer_class = CommentDetailSerializer
+    def put(self,request,pk):
+        obj =Comments.objects.get(pk=pk)
+        serializer=self.serializer_class(instance=obj,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message':'comment successfully updated'},status=status.HTTP_200_OK)
+        
+        else:
+            return Response(serializer.errors,status=status.HTTP_404_NOT_FOUND)
+    
+    def delete(self,request,pk):
+        obj =obj =Comments.objects.get(pk=pk)
+        if obj :
+            obj.delete()
+            return Response({'msg':'comment successfully deleted'},status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({'msg':'cant find any comment with this id '},status=status.HTTP_404_NOT_FOUND)  
+    
+    

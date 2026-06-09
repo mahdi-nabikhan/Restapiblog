@@ -214,3 +214,27 @@ class PostAPIActionViewSets(ViewSet):
         obj = self.model.objects.get(pk=pk)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CommentListAndCreateAPIView(GenericAPIView):
+    serializer_class=CommentSerializer
+    
+    
+    
+    def get(self,request,pk):
+        comments = Comments.objects.filter(post__pk =pk,published=True)
+        serializer = self.serializer_class(instance=comments,many=True,context={'request':request})
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
+    def post (self,request,pk):
+        data=request.data
+        post = Post.objects.get(pk=pk)
+        if  not post :
+            return Response({'message':'cant find any post with id you send'})
+            
+        serializer = self.serializer_class(data=data,context={'request':request})
+        if serializer.is_valid():
+            serializer.save(post=post)
+            return Response({'message':'comment successfuly added'},status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors,status=status.HTTP_404_NOT_FOUND)

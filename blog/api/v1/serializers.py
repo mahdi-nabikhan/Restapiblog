@@ -91,8 +91,8 @@ class PostSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comments
-        fields = ['id','user','post','created_at','published','updated_at']
-        read_only_fileds = ['user','post']
+        fields = ['id','user','post','content','created_at','published','updated_at']
+        read_only_fields = ('user','post')
         
     def create(self,attrs):
         request = self.context.get('request')

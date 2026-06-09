@@ -7,6 +7,7 @@ router.register(r'posts', PostAPIActionViewSets, basename='post')
 urlpatterns = [
     path('post/', PostListView.as_view(), name='post-list'),
     path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+    path('comments/<int:pk>/',CommentListAndCreateAPIView.as_view(),name='comments-list-create'),
     path('', include(router.urls)),
 
 ]

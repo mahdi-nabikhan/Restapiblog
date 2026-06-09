@@ -1,7 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Comments.css";
+import CommentCard from "../CommentCard/CommentCard";
 
 export default function Comments() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedComment, setSelectedComment] = useState(null);
+
+  const openReplyModal = (comment) => {
+    setSelectedComment(comment);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedComment(null);
+    setIsModalOpen(false);
+  };
+
   const comments = [
     {
       id: 1,
@@ -14,8 +28,7 @@ export default function Comments() {
       id: 2,
       username: "Sarah Smith",
       date: "Aug 16, 2026",
-      content:
-        "Great explanation. Looking forward to more posts like this!",
+      content: "Great explanation. Looking forward to more posts like this!",
     },
     {
       id: 3,
@@ -34,24 +47,33 @@ export default function Comments() {
 
       <div className="comments__list">
         {comments.map((comment) => (
-          <div className="comment-card" key={comment.id}>
-            <div className="comment-card__header">
-              <div className="comment-card__avatar">
-                {comment.username.charAt(0)}
-              </div>
-
-              <div>
-                <h4>{comment.username}</h4>
-                <span>{comment.date}</span>
-              </div>
-            </div>
-
-            <p className="comment-card__content">
-              {comment.content}
-            </p>
-          </div>
+          <CommentCard
+            key={comment.id}
+            comment={comment}
+            onReply={() => openReplyModal(comment)}
+          />
         ))}
       </div>
+
+      
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Reply to {selectedComment?.username}</h3>
+
+            <p style={{ marginBottom: "10px" }}>
+              {selectedComment?.content}
+            </p>
+
+            <textarea placeholder="Write your reply..." />
+
+            <div className="modal-actions">
+              <button onClick={closeModal}>Close</button>
+              <button>Send</button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

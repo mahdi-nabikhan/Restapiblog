@@ -139,6 +139,7 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'accounts.api.v1.authentications.CookieJWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
@@ -170,6 +171,6 @@ CACHES = {
     }
 }
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:2971",
+    "http://localhost:3000",
 ]
 CORS_ALLOW_CREDENTIALS = True

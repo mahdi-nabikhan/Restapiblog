@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from blog.models import Post, Category
+from blog.models import Post, Category,Comments
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -86,3 +86,24 @@ class PostSerializer(serializers.ModelSerializer):
     def get_absolute_url(self, instance):
         request = self.context.get('request')
         return request.build_absolute_uri(instance.pk)
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comments
+        fields = ['pk','user','post','content','created_at','published','updated_at']
+        read_only_fields = ('user','post')
+        
+    def create(self,validated_data):
+        request = self.context.get('request')
+        validated_data['user']=request.user
+        
+        return Comments.objects.create(**validated_data)
+    
+    
+class CommentDetailSerializer(serializers.ModelSerializer):
+    class Meta : 
+        model =  Comments
+        fields = ['content']
+        
+    

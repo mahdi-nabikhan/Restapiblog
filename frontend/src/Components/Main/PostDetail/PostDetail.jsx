@@ -4,12 +4,18 @@ import "./PostDetail.css";
 
 const DEFAULT_IMAGE = "/images/default_image.PNG";
 
-export default function PostDetail() {
-  const { id } = useParams();
+export default function PostDetail({ id }) {
+
 
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const imageUrl =
+  post?.image
+    ? post.image.startsWith("http")
+      ? post.image
+      : `http://localhost:8000${post.image}`
+    : DEFAULT_IMAGE;
 
   const getPostDetail = async () => {
     try {
@@ -50,9 +56,10 @@ export default function PostDetail() {
           {/* Image */}
           <img
             className="post-image"
-            src={post?.image || DEFAULT_IMAGE}
+            src={imageUrl}
             alt={post?.title || "Post image"}
             onError={(e) => {
+              e.target.onerror = null; // جلوگیری از loop
               e.target.src = DEFAULT_IMAGE;
             }}
           />

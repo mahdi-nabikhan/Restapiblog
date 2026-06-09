@@ -1,104 +1,112 @@
 .post-container {
-    display: flex;
-    justify-content: center;
-    padding: 50px 16px;
-    background: #f3f5f9;
-    min-height: 100vh;
-  }
-  
-  .post-card {
-    width: 100%;
-    max-width: 1000px;
-    background: #fff;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* 🔥 layout اصلی */
+  display: flex;
+  justify-content: center;
+  padding: 50px 16px;
+  background: #f3f5f9;
+  min-height: 100vh;
+}
+
+/* کارت اصلی */
+.post-card {
+  width: 100%;
+  max-width: 1000px;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* layout */
+.post-layout {
+  display: flex;
+  gap: 30px;
+  padding: 25px;
+  align-items: flex-start;
+}
+
+/* 📸 image */
+.post-image {
+  width: 260px !important;
+  height: 260px !important;
+  object-fit: cover;
+  border-radius: 14px;
+  flex-shrink: 0;
+  display: block;
+  max-width: 260px;
+}
+
+/* hover effect */
+.post-image:hover {
+  transform: scale(1.03);
+}
+
+/* content */
+.post-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* title */
+.post-title {
+  font-size: 30px;
+  margin: 0;
+  color: #222;
+}
+
+/* meta */
+.post-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* dates */
+.post-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #888;
+  padding: 12px 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+/* content text */
+.post-text {
+  font-size: 16px;
+  line-height: 1.9;
+  color: #333;
+  margin-top: 10px;
+}
+
+/* states */
+.loader,
+.error,
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  font-size: 18px;
+}
+
+.error {
+  color: #d9534f;
+}
+
+/* 📱 responsive */
+@media (max-width: 768px) {
   .post-layout {
-    display: flex;
-    gap: 25px;
-    padding: 25px;
-    align-items: flex-start;
+    flex-direction: column;
   }
-  
-  /* image left */
+
   .post-image {
-    width: 320px;
-    height: 320px;
-    object-fit: cover;
-    border-radius: 12px;
-    flex-shrink: 0;
+    width: 100%;
+    height: 240px;
   }
-  
-  /* right content */
-  .post-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  /* title */
-  .post-title {
-    font-size: 30px;
-    margin: 0;
-    color: #222;
-  }
-  
-  /* meta info */
-  .post-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 14px;
-    color: #666;
-  }
-  
-  /* dates box */
-  .post-dates {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 13px;
-    color: #888;
-    padding: 10px 0;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
-  }
-  
-  /* content */
-  .post-text {
-    font-size: 16px;
-    line-height: 1.9;
-    color: #333;
-    margin-top: 10px;
-  }
-  
-  /* states */
-  .loader,
-  .error,
-  .empty {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 60vh;
-    font-size: 18px;
-  }
-  
-  .error {
-    color: #d9534f;
-  }
-  
-  /* 📱 responsive */
-  @media (max-width: 768px) {
-    .post-layout {
-      flex-direction: column;
-    }
-  
-    .post-image {
-      width: 100%;
-      height: 250px;
-    }
-  }
+}

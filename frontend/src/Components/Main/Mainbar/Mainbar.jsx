@@ -1,5 +1,6 @@
 import React from "react";
 import "./Mainbar.css";
+import Typewriter from 'typewriter-effect'
 
 export default function MainBar() {
   return (
@@ -7,9 +8,22 @@ export default function MainBar() {
 
       <div className="mainbar__text">
         <h1>Discover Amazing Posts</h1>
-        <p>
-          Explore articles, tutorials and ideas shared by developers around the world.
-        </p>
+        <Typewriter options={{
+          autoStart: true,
+          loop: true,
+          delay: 50,
+          deleteSpeed: 30,
+        }} onInit={typewriter => {
+          typewriter.typeString(
+            'Explore articles, tutorials and ideas shared by developers around the world.'
+          ).start()
+            .pauseFor(2000)
+            .deleteAll().
+            typeString('CodeCraft - a Place For Self Development')
+            .start()
+            .pauseFor(2000)
+            .deleteAll()
+        }} />
 
         <button>Explore Now</button>
       </div>

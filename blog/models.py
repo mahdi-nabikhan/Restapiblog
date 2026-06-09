@@ -35,3 +35,18 @@ class Category(models.Model):
     this is class to define categories for blog app
     """
     name = models.CharField(max_length=200)
+    
+    
+    
+class Comments(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    post = models.ForeignKey(Post,on_delete=models.CASCADE)
+    
+    content = models.TextField(max_length=255)
+    published = models.BooleanField(default=False)
+    
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    
+    

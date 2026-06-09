@@ -4,8 +4,8 @@ import "./PostDetail.css";
 
 const DEFAULT_IMAGE = "/images/default_image.PNG";
 
-export default function PostDetail() {
-  const { id } = useParams();
+export default function PostDetail(id) {
+  
 
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);

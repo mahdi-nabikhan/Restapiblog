@@ -261,4 +261,11 @@ class CommentDetailAndDeleteAPIView(GenericAPIView):
         else:
             return Response({'msg':'cant find any comment with this id '},status=status.HTTP_404_NOT_FOUND)  
     
+class UserPostListApiView(GenericAPIView):
+    serializer_class=PostSerializer
     
+    
+    def get(self,request):
+        obj =  Post.objects.filter(auther=request.user)
+        serializer = self.serializer_class(instance=obj,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)

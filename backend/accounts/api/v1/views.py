@@ -645,3 +645,28 @@ class GetUserAPIView(GenericAPIView):
             "id": user.id,
             "email": user.email,
         })
+
+
+
+class ProfileDetail(GenericAPIView):
+    serializer_class=ProfileSerializer
+    
+    def get(self,request):
+        user = request.user
+        profile= Profile.objects.get(user=user)
+ 
+        serializer=self.serializer_class(instance=profile)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
+    def put(self,request):
+        user = request.user
+        profile= Profile.objects.get(user=user)
+
+        serializer = self.serializer_class(instance=profile,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message':'profile updated successfully'},status=status.HTTP_200_OK)
+        else:
+             return Response(serializer.errors,status=status.HTTP_404_NOT_FOUND)
+        
+        

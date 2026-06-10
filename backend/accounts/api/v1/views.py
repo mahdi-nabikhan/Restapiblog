@@ -633,3 +633,15 @@ class ActivationResendApiView(GenericAPIView):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }
+
+
+class GetUserAPIView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        return Response({
+            "id": user.id,
+            "email": user.email,
+        })

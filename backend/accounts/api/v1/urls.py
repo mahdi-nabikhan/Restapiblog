@@ -20,5 +20,6 @@ urlpatterns = [
     path('send/email/template/', SendEmailApiView.as_view(), name='send_templated_email'),
     path('activation/confirm/<str:token>/', ActivationApiView.as_view(), name='activation-confirm'),
     path('activation/resend/',ActivationResendApiView.as_view(),name='activation-resend'),
+    path('me/',GetUserAPIView.as_view(),name='get-user')
 
 ]

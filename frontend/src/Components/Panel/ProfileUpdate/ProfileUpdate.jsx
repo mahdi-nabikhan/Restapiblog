@@ -53,7 +53,7 @@ export default function ProfileUpdate() {
       }
 
       const res = await fetch(
-        "http://localhost:8000/accounts/api/v1/profile/",
+        "http://localhost:8000/accounts/api/v1/profile/detail/",
         {
           method: "PUT",
           credentials: "include",

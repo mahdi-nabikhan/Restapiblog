@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Navbar.css";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [user, setUser] = useState(null);
@@ -62,7 +63,7 @@ export default function Navbar() {
 
       {/* LINKS */}
       <div className={`navbar__links ${menuOpen ? "active" : ""}`}>
-        <a href="/">Home</a>
+        <Link to={''}>Home</Link>
         <a href="/posts">Posts</a>
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
@@ -78,9 +79,9 @@ export default function Navbar() {
             </button>
           </div>
         ) : (
-          <div className="navbar__buttons">
-            <button className="btn login">Login</button>
-            <button className="btn register">Register</button>
+          <div className="navbar__buttons LinkText">
+            <Link to={'login'} className="btn login">Login</Link>
+            <Link to= {'register'} className="btn register">Register</Link>
           </div>
         )}
       </div>

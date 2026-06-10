@@ -1,0 +1,38 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Build Docker containers
+      run: docker compose build
+
+    - name: Start Docker containers
+      run: docker compose up -d
+
+    - name: Wait for backend container to be ready
+      run: |
+        echo "Waiting for backend to be ready..."
+        for i in {1..30}; do
+          docker exec backend ls /app/restapiblog > /dev/null 2>&1 && break
+          echo "Waiting..."
+          sleep 2
+        done
+
+    - name: Run Django Tests
+      run: docker exec backend sh -c "cd /app/restapiblog && pytest"
+
+    - name: Shutdown containers
+      if: always()
+      run: docker compose down

@@ -11,11 +11,12 @@ services:
 
 
   backend:
-    build: .
+    build: 
+      context: ./backend
     container_name: backend-blog
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     volumes:
-      - .:/app
+      - ./backend:/app
     ports:
       - 8000:8000
     environment:

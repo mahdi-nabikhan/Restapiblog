@@ -10,6 +10,7 @@ import PostDetailPages from "./Pages/Main/PostDetailPages/PostDetailPages"
 import Panel from "./Pages/Panel/Panel"
 import PostUpdatePage from "./Pages/PostUpdate/PostUpdatePage"
 import PostUpdate from "./Pages/PostUpdate/PostUpdatePage"
+import ProfilePage from "./Pages/ProfilePage/ProfilePage"
 import Register from "./Pages/Register/Register"
 import UpdateProfilePage from "./Pages/UpdateProfilePage/UpdateProfilePage"
 
@@ -26,7 +27,8 @@ const routes = [{
 {path :'/panel',element:<ProfileLayout/>,children:[
           {index:true,element:<Panel/>},
           {path:'post/:id',element:<PostUpdatePage/>},
-          {path:'profile/edit',element:<UpdateProfilePage/>}
+          {path:'profile/edit',element:<UpdateProfilePage/>},
+          {path:'profile/detail',element:<ProfilePage/>}
 
 ]}]
 

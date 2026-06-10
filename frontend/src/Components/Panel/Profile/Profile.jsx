@@ -1,46 +1,72 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Profile.css";
 
 export default function Profile() {
-  return (
-    <div className="profile-container">
-      <div className="profile-card">
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-        <div className="profile-header">
+  const getProfile = async () => {
+    try {
+      const res = await fetch(
+        "http://localhost:8000/accounts/api/v1/profile/detail/",
+        {
+          credentials: "include",
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch profile");
+      }
+
+      const data = await res.json();
+
+      setProfile(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getProfile();
+  }, []);
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+
+  return (
+    <div className="profile">
+      <div className="profile__card">
+        <div className="profile__header">
           <img
-            className="profile-avatar"
-            src="https://i.pravatar.cc/150?img=12"
-            alt="avatar"
+            src={
+              profile.image
+                ? `http://localhost:8000${profile.image}`
+                : "/default-avatar.png"
+            }
+            alt="Profile"
+            className="profile__avatar"
           />
 
-          <div className="profile-info">
-            <h2>John Doe</h2>
-            <p>johndoe@gmail.com</p>
+          <div>
+            <h2>
+              {profile.first_name} {profile.last_name}
+            </h2>
+
+            <p>
+              {profile.description ||
+                "No description yet"}
+            </p>
           </div>
         </div>
 
-        <div className="profile-body">
-          <div className="profile-item">
-            <span>Username</span>
-            <p>john_doe</p>
-          </div>
-
-          <div className="profile-item">
-            <span>Joined</span>
-            <p>2026 / 01 / 10</p>
-          </div>
-
-          <div className="profile-item">
-            <span>Role</span>
-            <p>User</p>
-          </div>
+        <div className="profile__footer">
+          <button className="profile__btn">
+            Edit Profile
+          </button>
         </div>
-
-        <div className="profile-actions">
-          <button className="btn edit">Edit Profile</button>
-          <button className="btn logout">Logout</button>
-        </div>
-
       </div>
     </div>
   );

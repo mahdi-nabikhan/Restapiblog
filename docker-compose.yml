@@ -99,6 +99,29 @@ services:
       SENTRY_DB_PASSWORD: postgres
       SENTRY_REDIS_HOST: redis
     command: sentry run worker
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.0
+    container_name: elasticsearch
+
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+    restart: unless-stopped
+
+
+  
+
 volumes:
   smtp4dev-data:
   postgres_data:
+  elasticsearch_data:

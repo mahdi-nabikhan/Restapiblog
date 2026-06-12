@@ -9,8 +9,8 @@ from .permissions import *
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from .paginations import DefaultPagination
-
-
+from django.core.cache import cache
+import random
 
 class PostListView(GenericAPIView):
     """
@@ -269,3 +269,29 @@ class UserPostListApiView(GenericAPIView):
         obj =  Post.objects.filter(auther=request.user)
         serializer = self.serializer_class(instance=obj,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
+
+
+
+class PostListCacheAPIView(GenericAPIView):
+    serializer_class = PostSerializer
+    
+    def get(self,request):
+        cache_kay= 'post_list'
+        cache_data = cache.get(cache_kay)
+        if cache_data:
+            return Response(cache_data)
+        ids = list(Post.objects.values_list("id", flat=True))
+        selected_ids = random.sample(ids, k=min(6, len(ids)))
+        posts = list(Post.objects.filter(id__in=selected_ids))
+        posts.sort(key=lambda x: selected_ids.index(x.id))
+        
+        if not posts:
+            return Response([])
+        
+        serializer = self.serializer_class(posts,many=True,context={'request':request})
+        data= serializer.data
+        cache.set(cache_kay,data,timeout=60 * 20)
+        return Response(data)        
+        
+        
+        

@@ -16,6 +16,7 @@ from django.template.loader import render_to_string
 from accounts.tasks import *
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
+from accounts.throttles import (LoginThrottle,RegisterThrottle)
 
 User = get_user_model()
 
@@ -127,6 +128,7 @@ class RegisterView(GenericAPIView):
         }
         """
     serializer_class = UserRegistrationSerializer
+    throttle_classes=[RegisterThrottle]
 
     def post(self, request):
         """
@@ -264,6 +266,7 @@ class CustomTokenPairView(TokenObtainPairView):
         - It is based on `TokenObtainPairView` from `rest_framework_simplejwt.views`.
         """
     serializer_class = CustomObtainPairSerializer
+    throttle_classes = [LoginThrottle]
     
     
     def post (self, request):

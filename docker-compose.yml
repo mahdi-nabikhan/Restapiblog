@@ -8,7 +8,21 @@ services:
       - "6379:6379"
     command: redis-server --save 60 1 --loglevel warning
 
+  db:
+    image: postgres:17
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_DB: blog_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+    - postgres_data:/var/lib/postgresql/data
 
+
+  
 
   backend:
     build: 
@@ -24,6 +38,7 @@ services:
       - DEBUG=True
     depends_on:
       - redis
+      - db
 
   smtp4dev:
     image: rnwood/smtp4dev:v3
@@ -39,13 +54,102 @@ services:
       - ServerOptions__Urls=http://*:80
       - ServerOptions__HostName=smtp4dev
   worker:
-    build: .
+    build: 
+      context: ./backend
     command: celery -A RestApiBlog worker --loglevel=info
     depends_on:
       - redis
       - backend
+      - db
     volumes:
       - .:/app
+  sentry:
+    image: sentry:latest
+    container_name: sentry-web
+    ports:
+      - "9000:9000"
+    depends_on:
+      - redis
+      - db
+    environment:
+      SENTRY_SECRET_KEY: "change-this-secret-key"
+      SENTRY_POSTGRES_HOST: db
+      SENTRY_DB_NAME: blog_db
+      SENTRY_DB_USER: postgres
+      SENTRY_DB_PASSWORD: postgres
+      SENTRY_REDIS_HOST: redis
+    command: 
+      bash -c "
+      sentry upgrade --noinput &&
+      sentry run web
+      "
+
+  sentry-worker:
+    image: sentry:latest
+    container_name: sentry-worker
+    depends_on:
+      - sentry
+      - redis
+      - db
+    environment:
+      SENTRY_SECRET_KEY: "change-this-secret-key"
+      SENTRY_POSTGRES_HOST: db
+      SENTRY_DB_NAME: blog_db
+      SENTRY_DB_USER: postgres
+      SENTRY_DB_PASSWORD: postgres
+      SENTRY_REDIS_HOST: redis
+    command: sentry run worker
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.0
+    container_name: elasticsearch
+
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+    restart: unless-stopped
+
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.17.0
+    container_name: kibana
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    restart: unless-stopped
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.17.0
+    container_name: logstash
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    environment:
+      - LS_JAVA_OPTS=-Xms256m -Xmx256m
+    restart: unless-stopped  
+  
+
+
+  
 
 volumes:
   smtp4dev-data:
+  postgres_data:
+  elasticsearch_data:

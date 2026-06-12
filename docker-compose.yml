@@ -8,7 +8,21 @@ services:
       - "6379:6379"
     command: redis-server --save 60 1 --loglevel warning
 
+  db:
+    image: postgres:17
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_DB: blog_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+    - postgres_data:/var/lib/postgresql/data
 
+
+  
 
   backend:
     build: 
@@ -49,3 +63,4 @@ services:
 
 volumes:
   smtp4dev-data:
+  postgres_data:

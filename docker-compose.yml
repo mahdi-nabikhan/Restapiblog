@@ -38,6 +38,7 @@ services:
       - DEBUG=True
     depends_on:
       - redis
+      - db
 
   smtp4dev:
     image: rnwood/smtp4dev:v3
@@ -53,11 +54,13 @@ services:
       - ServerOptions__Urls=http://*:80
       - ServerOptions__HostName=smtp4dev
   worker:
-    build: .
+    build: 
+      context: ./backend
     command: celery -A RestApiBlog worker --loglevel=info
     depends_on:
       - redis
       - backend
+      - db
     volumes:
       - .:/app
 

@@ -10,6 +10,7 @@ urlpatterns = [
     path('comments/<int:pk>/',CommentListAndCreateAPIView.as_view(),name='comments-list-create'),
     path('comment/detail/<int:pk>/',CommentDetailAndDeleteAPIView.as_view(),name='comment-detail'),
     path('user/post/',UserPostListApiView.as_view(),name='user-posts'),
+    path('post/list/cache/', PostListCacheAPIView.as_view(),name='post-cache'),
     path('', include(router.urls)),
 
 ]

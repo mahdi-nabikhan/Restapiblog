@@ -6,7 +6,7 @@ export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const checkAuth = async () => {
+  const getMe = async () => {
     try {
       const res = await fetch(
         "http://localhost:8000/accounts/api/v1/me/",
@@ -30,16 +30,68 @@ export default function AuthProvider({ children }) {
   };
 
   useEffect(() => {
-    checkAuth();
+    let ignore = false;
+
+    const run = async () => {
+      try {
+        const res = await fetch(
+          "http://localhost:8000/accounts/api/v1/me/",
+          {
+            credentials: "include",
+          }
+        );
+
+        if (!res.ok) {
+          if (!ignore) {
+            setUser(null);
+            setLoading(false);
+          }
+          return;
+        }
+
+        const data = await res.json();
+
+        if (!ignore) {
+          setUser(data);
+          setLoading(false);
+        }
+      } catch (err) {
+        if (!ignore) {
+          setUser(null);
+          setLoading(false);
+        }
+      }
+    };
+
+    run();
+
+    return () => {
+      ignore = true;
+    };
   }, []);
+
+  const logout = async () => {
+    try {
+      await fetch(
+        "http://localhost:8000/accounts/api/v1/logout/",
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+    } catch (e) {}
+
+    setUser(null);
+  };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        setUser,
         loading,
         isLoggedIn: !!user,
+        logout,
+        refreshAuth: getMe,
       }}
     >
       {children}

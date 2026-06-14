@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import "./Comments.css";
 import CommentCard from "../CommentCard/CommentCard";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../../Context/AuthContex";
 
 
 export default function Comments({ id }) {

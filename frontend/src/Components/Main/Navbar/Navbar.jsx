@@ -64,7 +64,7 @@ export default function Navbar() {
       {/* LINKS */}
       <div className={`navbar__links ${menuOpen ? "active" : ""}`}>
         <Link to={''}>Home</Link>
-        <a href="/posts">Posts</a>
+        <Link to = {'add/post'}>Add Posts</Link>
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
       </div>

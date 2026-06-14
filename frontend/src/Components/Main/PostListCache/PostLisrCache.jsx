@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import './PostListCache.css'
+import { Link } from "react-router-dom";
 const PostListCache = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -9,7 +10,7 @@ const PostListCache = () => {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:8000/api/v1/post/list/");
+      const res = await fetch("http://localhost:8000/blog/api/v1/post/list/cache/");
 
       if (!res.ok) {
         throw new Error("Failed to fetch posts");
@@ -36,26 +37,28 @@ const PostListCache = () => {
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
-    <div style={styles.container}>
-      <h2>Random Posts (Cache)</h2>
-
-      <div style={styles.grid}>
-        {posts.map((post) => (
-          <div key={post.id} style={styles.card}>
-            <h3>{post.title}</h3>
-            <p>
-              {post.content?.slice(0, 120)}
-              {post.content?.length > 120 && "..."}
-            </p>
-
-            <small>
-              {post.created_at &&
-                new Date(post.created_at).toLocaleDateString()}
-            </small>
-          </div>
-        ))}
+      <div className="container">
+        <h2 className="title">Other  Posts</h2>
+    
+        <div className="grid">
+          {posts.map((post) => (
+            <div key={post.id} className="card">
+              <Link to= {`post/${post.id}`}>{post.title}</Link>
+    
+              <p className="cardText">
+                {post.content?.slice(0, 120)}
+                {post.content?.length > 120 && "..."}
+              </p>
+    
+              <small className="date">
+                {post.created_at &&
+                  new Date(post.created_at).toLocaleDateString()}
+              </small>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+
   );
 };
 

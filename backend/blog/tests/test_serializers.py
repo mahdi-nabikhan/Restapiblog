@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 from rest_framework import status
-from blog.models import Post, Category
+from blog.models import Post, Category,Comments
 
 
 @pytest.mark.django_db
@@ -104,3 +104,30 @@ class TestPostDetailView:
 def api_client():
     from rest_framework.test import APIClient
     return APIClient()
+
+@pytest.mark.django_db
+class TestCommentList:
+
+    
+    
+    def test_comment_list(self,api_client,django_user_model):
+        user = django_user_model.objects.create_user(email='test@gmail.com',password='test12345')
+        post = Post.objects.create(auther=user,title='test',description='this is recored for test')
+        url = reverse('blog:api:comments-list-create',kwargs=post.pk)
+        response = api_client.get(url)
+        assert response.status_code == status.HTTP_200_OK
+        
+    def test_comment_post(self,api_client,django_user_model):
+        user = django_user_model.objects.create_user(email='test@gmail.com',password='test12345')
+        post = Post.objects.create(auther=user,title='test',description='this is recored for test')
+        api_client.force_authenticate(user=user)
+        
+        comment = Comments.objects.create(
+            user=user,
+            post=post,
+            content = 'this is test creations'
+        )
+        url = reverse('blog:api:comments-list-create',kwargs=post.pk,data=comment)
+        response = api_client.post(url)
+        assert response.status_code == status.HTTP_201_CREATED
+        

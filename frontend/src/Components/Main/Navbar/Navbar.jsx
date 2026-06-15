@@ -6,7 +6,32 @@ export default function Navbar() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const searchPosts = async (value) => {
+    if (value.length < 2) {
+      setResults([]);
+      return;
+    }
 
+    try {
+      setSearchLoading(true);
+
+      const res = await fetch(
+        ``
+      );
+
+      const data = await res.json();
+
+      setResults(data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
   const getUser = async () => {
     try {
       const res = await fetch("http://localhost:8000/accounts/api/v1/me/", {
@@ -64,12 +89,56 @@ export default function Navbar() {
       {/* LINKS */}
       <div className={`navbar__links ${menuOpen ? "active" : ""}`}>
         <Link to={''}>Home</Link>
-        <Link to = {'add/post'}>Add Posts</Link>
-        <a href="/about">About</a>
-        <a href="/contact">Contact</a>
+        <Link to={'add/post'}>Add Posts</Link>
+        <Link to={'about/us'}>About Us</Link>
+        <Link to={'contact/us'}>Contact Us</Link>
       </div>
 
       {/* AUTH AREA */}
+      <div className="navbar__search">
+        <input
+          type="text"
+          placeholder="Search posts..."
+          value={query}
+          onChange={handleSearch}
+          onFocus={() => setSearchOpen(true)}
+        />
+
+        {searchOpen && (
+          <div className="search-modal">
+
+            {searchLoading && (
+              <p className="search-message">
+                Searching...
+              </p>
+            )}
+
+            {!searchLoading &&
+              results.length === 0 &&
+              query.length > 1 && (
+                <p className="search-message">
+                  No results found
+                </p>
+              )}
+
+            {results.map((post) => (
+              <Link
+                key={post.id}
+                to={`/post/${post.id}`}
+                className="search-item"
+                onClick={() => {
+                  setSearchOpen(false);
+                  setQuery("");
+                }}
+              >
+                <h4>{post.title}</h4>
+
+                <p>{post.snippet}</p>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
       <div className="navbar__auth">
         {user ? (
           <div className="navbar__user">
@@ -81,7 +150,7 @@ export default function Navbar() {
         ) : (
           <div className="navbar__buttons LinkText">
             <Link to={'login'} className="btn login">Login</Link>
-            <Link to= {'register'} className="btn register">Register</Link>
+            <Link to={'register'} className="btn register">Register</Link>
           </div>
         )}
       </div>

@@ -95,6 +95,67 @@
   height: 3px;
   background: #111827;
   border-radius: 5px;
+
+}
+.navbar__search {
+  position: relative;
+  width: 320px;
+}
+
+.navbar__search input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+}
+
+.search-modal {
+  position: absolute;
+  top: 50px;
+  left: 0;
+
+  width: 100%;
+
+  background: white;
+
+  border-radius: 12px;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,.12);
+
+  max-height: 400px;
+  overflow-y: auto;
+
+  z-index: 999;
+}
+
+.search-item {
+  display: block;
+
+  padding: 15px;
+
+  text-decoration: none;
+  color: black;
+
+  border-bottom: 1px solid #eee;
+}
+
+.search-item:hover {
+  background: #f8fafc;
+}
+
+.search-item h4 {
+  margin-bottom: 5px;
+}
+
+.search-item p {
+  color: #666;
+  font-size: 14px;
+}
+
+.search-message {
+  padding: 15px;
+  text-align: center;
 }
 
 /* RESPONSIVE */

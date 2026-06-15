@@ -1,38 +1,74 @@
-# 📝 Blog API Project
+# 📌 RestApiBlog
 
-A modern, scalable, and RESTful Blog API built with **Django** and **Django REST Framework**. The project uses **SQLite** for development, **PostgreSQL** for production, and is containerized using **Docker**. It features automatic API documentation with **Swagger** and supports testing via **Postman**.
+A full-stack blog platform built with Django REST Framework (DRF) and React, featuring authentication, comments system, caching, pagination, and modern backend architecture.
 
 ---
 
 ## 🚀 Features
 
-- Full CRUD operations for blog posts
-- User registration and authentication
-- API documentation with Swagger UI
-- SQLite for local development
-- PostgreSQL ready for production
-- Dockerized setup for easy deployment
-- Postman collection for testing endpoints
+### 🔐 Authentication
+- JWT-based authentication (custom + SimpleJWT)
+- Login / Register system
+- Cookie-based auth support
+- Protected routes (backend + frontend)
+
+### 📝 Blog System
+- Create / Read / Update / Delete Posts
+- Categories support
+- Post snippets for previews
+- Image upload support
+
+### 💬 Comments System
+- Add comments to posts
+- Update & delete comments
+- Reply system support (ready for nested structure)
+
+### ⚡ Performance
+- Redis caching for post list
+- Celery background tasks
+- Rate limiting (throttling)
+
+### 🔍 Search
+- Elasticsearch integration ready (structure prepared)
+
+### 📧 Email System
+- SMTP integration using smtp4dev (development environment)
+
+### 🧪 Testing
+- Pytest-based tests
+- Model tests (Post, Category, Comments)
+- Serializer tests
+- API endpoint tests
 
 ---
 
-## 🛠 Technologies Used
+## 🧱 Tech Stack
 
-- Python 3.8+
-- Django 4.x
+### Backend
+- Django 5+
 - Django REST Framework
-- SQLite3 (development)
-- PostgreSQL (production)
+- PostgreSQL
+- Redis
+- Celery
+- SimpleJWT
+- django-redis
+- drf-yasg (Swagger)
+
+### Frontend
+- React.js
+- React Router
+- Context API
+- Fetch API
+- CSS (custom styling)
+
+### DevOps
 - Docker & Docker Compose
-- Swagger (drf-yasg)
-- Postman (for testing)
+- Elasticsearch + Kibana + Logstash (ELK Stack)
+- SMTP4dev
 
 ---
 
-## ⚙️ Getting Started
-
-### 1. Clone the repository
+## 🐳 Run Project (Docker)
 
 ```bash
-git clone https://github.com/username/blog-api.git
-cd blog-api
+docker compose up --build

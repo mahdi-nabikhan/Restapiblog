@@ -161,7 +161,9 @@ export default function Comments({ id }) {
           </div>
         ) : (
           <div className="comment-login-box">
-            <p>You must be logged in to write a comment.</p>
+          <p className="comment-login-warning">
+  You must be logged in to write a comment.
+</p>
           </div>
         )}
 

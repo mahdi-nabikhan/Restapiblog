@@ -117,3 +117,23 @@
   .add-comment__btn:hover {
     background: #4338ca;
   }
+
+
+  .comment-login-warning {
+    color: #dc2626;
+  
+    text-align: center;
+  
+    font-size: 18px;
+    font-weight: 600;
+  
+    margin: 20px 0;
+  
+    padding: 12px;
+  
+    border-radius: 10px;
+  
+    background-color: #fef2f2;
+  
+    border: 1px solid #fecaca;
+  }

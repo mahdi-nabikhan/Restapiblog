@@ -1,9 +1,10 @@
 import pytest
 from django.urls import reverse
 from rest_framework import status
-from blog.models import Post, Category
-
-
+from blog.models import Post, Category,Comments
+from accounts.models import *
+from blog.api.v1.serializers import *
+from datetime import timezone
 @pytest.mark.django_db
 class TestPostListView:
     def test_get_post_list(self, api_client):
@@ -104,3 +105,74 @@ class TestPostDetailView:
 def api_client():
     from rest_framework.test import APIClient
     return APIClient()
+
+@pytest.mark.django_db
+class TestCommentList:
+
+    
+    
+    def test_comment_list(self,api_client,django_user_model):
+        user = django_user_model.objects.create_user(email='test@gmail.com',password='test12345')
+        post = Post.objects.create(auther=user,title='test',description='this is recored for test')
+        url = reverse('blog:api:comments-list-create',kwargs=post.pk)
+        response = api_client.get(url)
+        assert response.status_code == status.HTTP_200_OK
+        
+    def test_comment_post(self,api_client,django_user_model):
+        category =Category.objects.create(name='category1')
+        user = django_user_model.objects.create_user(email='test@gmail.com',password='test12345')
+        post = Post.objects.create(auther=user,title='test',description='this is recored for test',category=category)
+        api_client.force_authenticate(user=user)
+        
+        comment = Comments.objects.create(
+            user=user,
+            post=post,
+            content = 'this is test creations'
+        )
+        url = reverse('blog:api:comments-list-create',kwargs=post.pk,data=comment)
+        response = api_client.post(url)
+        assert response.status_code == status.HTTP_201_CREATED
+
+
+
+@pytest.mark.django_db
+class TestCommentDetailSerializer:
+
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        self.user = User.objects.create_user(
+            email="test@test.com",
+            password="123456"
+        )
+
+        self.category = Category.objects.create(name="Tech")
+
+        self.post = Post.objects.create(
+            auther=self.user,
+            title="Test Post",
+            content="Some content",
+            status=True,
+            category=self.category,
+            published_date=timezone.now()
+        )
+
+        self.comment = Comments.objects.create(
+            user=self.user,
+            post=self.post,
+            content="This is a comment"
+        )
+
+
+    def test_serializer_output(self):
+        serializer = CommentDetailSerializer(self.comment)
+
+        assert serializer.data["content"] == "This is a comment"
+
+
+    def test_serializer_validation(self):
+        data = {"content": "New comment"}
+
+        serializer = CommentDetailSerializer(data=data)
+
+        assert serializer.is_valid() is True
+        assert serializer.validated_data["content"] == "New comment"

@@ -1,13 +1,10 @@
-version: '3.9'
+version: "3.9"
 
 services:
-  redis:
-    container_name: redis-blog
-    image: redis
-    ports:
-      - "6379:6379"
-    command: redis-server --save 60 1 --loglevel warning
 
+  # ======================
+  # POSTGRES
+  # ======================
   db:
     image: postgres:17
     container_name: postgres-db
@@ -19,106 +16,83 @@ services:
     ports:
       - "5432:5432"
     volumes:
-    - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
+  # ======================
+  # REDIS
+  # ======================
+  redis:
+    image: redis
+    container_name: redis-blog
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
 
-  
-
+  # ======================
+  # BACKEND
+  # ======================
   backend:
-    build: 
+    build:
       context: ./backend
     container_name: backend-blog
-    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/app
     ports:
-      - 8000:8000
+      - "8000:8000"
     environment:
       - SECRET_KEY=test
       - DEBUG=True
     depends_on:
+      - db
+      - redis
+
+  # ======================
+  # CELERY WORKER
+  # ======================
+  worker:
+    build:
+      context: ./backend
+    container_name: celery-worker
+    command: celery -A RestApiBlog worker --loglevel=info
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - backend
       - redis
       - db
 
+  # ======================
+  # SMTP4DEV
+  # ======================
   smtp4dev:
     image: rnwood/smtp4dev:v3
     container_name: smtp4dev-blog
-    restart: always
     ports:
-      - '5000:80'   # Web UI
-      - '25:25'     # SMTP
-      - '143:143'   # IMAP
-    volumes:
-      - smtp4dev-data:/smtp4dev
-    environment:
-      - ServerOptions__Urls=http://*:80
-      - ServerOptions__HostName=smtp4dev
-  worker:
-    build: 
-      context: ./backend
-    command: celery -A RestApiBlog worker --loglevel=info
-    depends_on:
-      - redis
-      - backend
-      - db
-    volumes:
-      - .:/app
-  sentry:
-    image: sentry:latest
-    container_name: sentry-web
-    ports:
-      - "9000:9000"
-    depends_on:
-      - redis
-      - db
-    environment:
-      SENTRY_SECRET_KEY: "change-this-secret-key"
-      SENTRY_POSTGRES_HOST: db
-      SENTRY_DB_NAME: blog_db
-      SENTRY_DB_USER: postgres
-      SENTRY_DB_PASSWORD: postgres
-      SENTRY_REDIS_HOST: redis
-    command: 
-      bash -c "
-      sentry upgrade --noinput &&
-      sentry run web
-      "
+      - "5000:80"
+      - "25:25"
+      - "143:143"
 
-  sentry-worker:
-    image: sentry:latest
-    container_name: sentry-worker
-    depends_on:
-      - sentry
-      - redis
-      - db
-    environment:
-      SENTRY_SECRET_KEY: "change-this-secret-key"
-      SENTRY_POSTGRES_HOST: db
-      SENTRY_DB_NAME: blog_db
-      SENTRY_DB_USER: postgres
-      SENTRY_DB_PASSWORD: postgres
-      SENTRY_REDIS_HOST: redis
-    command: sentry run worker
-  
+  # ======================
+  # ELASTICSEARCH (MIRROR YOU USE)
+  # ======================
   elasticsearch:
-    image: mirror2.chabokan.net/elastic/kibana:8.19.16
+    image: mirror2.chabokan.net/elasticsearch:8.17.0
     container_name: elasticsearch
-
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
-
     ports:
       - "9200:9200"
       - "9300:9300"
-
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
-
     restart: unless-stopped
 
-
+  # ======================
+  # KIBANA (same mirror family)
+  # ======================
   kibana:
     image: mirror2.chabokan.net/elastic/kibana:8.19.16
     container_name: kibana
@@ -129,6 +103,10 @@ services:
     ports:
       - "5601:5601"
     restart: unless-stopped
+
+  # ======================
+  # LOGSTASH (mirror aligned)
+  # ======================
   logstash:
     image: mirror2.chabokan.net/logstash:9.4.2
     container_name: logstash
@@ -136,20 +114,32 @@ services:
       - elasticsearch
     ports:
       - "5044:5044"
-      - "5000:5000/tcp"
-      - "5000:5000/udp"
+      - "5000:5000"
       - "9600:9600"
     volumes:
       - ./logstash/pipeline:/usr/share/logstash/pipeline
     environment:
       - LS_JAVA_OPTS=-Xms256m -Xmx256m
-    restart: unless-stopped  
-  
+    restart: unless-stopped
 
+  # ======================
+  # FRONTEND
+  # ======================
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend-blog
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
 
-  
-
+# ======================
+# VOLUMES
+# ======================
 volumes:
-  smtp4dev-data:
   postgres_data:
   elasticsearch_data:

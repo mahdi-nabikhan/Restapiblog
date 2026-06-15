@@ -1,4 +1,6 @@
 import AddPosts from "./Components/AddPosts/AddPosts"
+import AboutUs from "./Components/Main/AboutUs/AboutUs"
+import ContactUs from "./Components/Main/ContactUs/ContactUs"
 import PostDetail from "./Components/Main/PostDetail/PostDetail"
 import Profile from "./Components/Panel/Profile/Profile"
 import ProfileUpdate from "./Components/Panel/ProfileUpdate/ProfileUpdate"
@@ -21,7 +23,10 @@ const routes = [{
         { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
         {path:'post/:id',element:<PostDetailPages/>},
-        {path:'add/post',element:<AddPosts/>}
+        {path:'add/post',element:<AddPosts/>},
+        {path:'about/us',element:<AboutUs/>},
+        {path:'contact/us',element:<ContactUs/>}
+
       ],
 },
 {path :'/panel',element:<ProfileLayout/>,children:[

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./RegisterForm.css";
 
 export default function RegisterForm() {
@@ -9,6 +10,8 @@ export default function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const navigate = useNavigate();
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -52,6 +55,10 @@ export default function RegisterForm() {
       }
 
       setSuccess("Account created successfully 🎉");
+      setTimeout(() => {
+        navigate("/");
+      }, 5000);
+
 
       setEmail("");
       setPassword("");

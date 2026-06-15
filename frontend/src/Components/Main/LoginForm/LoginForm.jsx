@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./LoginForm.css";
 
 export default function LoginForm() {
@@ -8,6 +9,7 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   const submitHandler = async (event) => {
     event.preventDefault();
@@ -41,6 +43,9 @@ export default function LoginForm() {
       console.log("Login success:", data);
 
       setSuccess("Login successful 🎉 Welcome back!");
+      setTimeout(() => {
+        navigate("/");
+      }, 5000);
 
       // optional: redirect
       // navigate("/panel");

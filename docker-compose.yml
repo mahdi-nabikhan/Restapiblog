@@ -144,7 +144,17 @@ services:
     environment:
       - LS_JAVA_OPTS=-Xms256m -Xmx256m
     restart: unless-stopped  
-  
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend-blog
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true  
 
 
   

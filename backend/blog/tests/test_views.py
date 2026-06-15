@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 from rest_framework import status
-from blog.models import Post, Category
+from blog.models import Post, Category,Comments
 from accounts.models import *
 from rest_framework.test import APIClient
 
@@ -130,3 +130,65 @@ class TestPostViewSet:
 @pytest.fixture
 def api_client():
     return APIClient()
+
+
+
+@pytest.mark.django_db
+class TestCommentDetailAndDeleteAPI:
+
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        self.client = APIClient()
+
+        self.user = User.objects.create_user(
+            email="test@test.com",
+            password="123456"
+        )
+
+        self.category = Category.objects.create(name="Tech")
+
+        self.post = Post.objects.create(
+            auther=self.user,
+            title="Test Post",
+            content="Some content",
+            status=True,
+            category=self.category,
+        )
+
+        self.comment = Comments.objects.create(
+            user=self.user,
+            post=self.post,
+            content="Old comment"
+        )
+
+        # اگر auth داری:
+        self.client.force_authenticate(user=self.user)
+
+    # =========================
+    # TEST PUT (UPDATE COMMENT)
+    # =========================
+    def test_update_comment(self):
+        url = f"/blog/api/v1/comment/{self.comment.pk}/"
+
+        data = {
+            "content": "Updated comment"
+        }
+
+        response = self.client.put(url, data, format="json")
+
+        assert response.status_code == 200
+        assert response.data["message"] == "comment successfully updated"
+
+        self.comment.refresh_from_db()
+        assert self.comment.content == "Updated comment"
+
+    # =========================
+    # TEST DELETE COMMENT
+    # =========================
+    def test_delete_comment(self):
+        url = f"/blog/api/v1/comment/{self.comment.pk}/"
+
+        response = self.client.delete(url)
+
+        assert response.status_code == 204
+        assert Comments.objects.filter(pk=self.comment.pk).exists() is False

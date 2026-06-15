@@ -3,7 +3,8 @@ from django.urls import reverse
 from rest_framework import status
 from blog.models import Post, Category,Comments
 from accounts.models import *
-
+from blog.api.v1.serializers import *
+from datetime import timezone
 @pytest.mark.django_db
 class TestPostListView:
     def test_get_post_list(self, api_client):
@@ -131,7 +132,7 @@ class TestCommentList:
         url = reverse('blog:api:comments-list-create',kwargs=post.pk,data=comment)
         response = api_client.post(url)
         assert response.status_code == status.HTTP_201_CREATED
-r
+
 
 
 @pytest.mark.django_db

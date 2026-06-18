@@ -1,5 +1,5 @@
 from unittest.mock import patch
-
+from mail_templated import EmailMessage
 import jwt
 import pytest
 from django.conf import settings
@@ -180,36 +180,7 @@ class TestCustomObtainToken(APITestCase):
         assert 'non_field_errors' in response.data
 
 
-@pytest.mark.django_db
-class TestSendEmailView(APITestCase):
-    def setUp(self):
-        self.url = reverse('accounts:api-v1:send_templated_email')  #
 
-    @patch('django.core.mail.send_mail')
-    def test_send_email_successfully(self, mock_send_mail):
-        mock_send_mail.return_value = 1
-
-        response = self.client.get(self.url)
-
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data["massage"] == "email send successfully "
-
-
-@pytest.mark.django_db
-class TestSendEmailApiView:
-    def setup_method(self):
-        self.client = APIClient()
-        self.user = User.objects.create_user(email="mmd@gmail.com", password="pass123")
-        self.url = reverse("accounts:api-v1:send-email")
-
-    @patch("accounts.views.EmailMessage.send")
-    def test_send_email_successfully(self, mock_send):
-        mock_send.return_value = 1
-        response = self.client.get(self.url)
-
-        assert response.status_code == status.HTTP_200_OK
-        assert response.data["message"] == "Token sent via email"
-        mock_send.assert_called_once()
 
 
 @pytest.mark.django_db

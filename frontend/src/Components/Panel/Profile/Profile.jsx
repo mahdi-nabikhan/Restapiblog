@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Profile.css";
+import BACKEND_URL from "../../../Utils";
 
 export default function Profile() {
   const [profile, setProfile] = useState(null);
@@ -8,7 +9,7 @@ export default function Profile() {
   const getProfile = async () => {
     try {
       const res = await fetch(
-        "http://localhost:8000/accounts/api/v1/profile/detail/",
+      `${BACKEND_URL}/accounts/api/v1/profile/detail/`,
         {
           credentials: "include",
         }

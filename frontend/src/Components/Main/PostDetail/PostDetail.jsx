@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./PostDetail.css";
-
+import BACKEND_URL from "../../../Utils";
 const DEFAULT_IMAGE = "/images/default_image.PNG";
 
 export default function PostDetail({ id }) {
@@ -20,7 +20,7 @@ export default function PostDetail({ id }) {
   const getPostDetail = async () => {
     try {
       const res = await fetch(
-        `http://localhost:8000/blog/api/v1/post/${id}/`,
+        `${BACKEND_URL}/blog/api/v1/post/${id}/`,
         {
           method: "GET",
           credentials: "include",

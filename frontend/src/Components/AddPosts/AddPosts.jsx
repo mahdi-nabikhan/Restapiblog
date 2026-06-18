@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./AddPosts.css";
-
+import BACKEND_URL from "../../Utils";
 export default function AddPosts() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -24,7 +24,7 @@ export default function AddPosts() {
       }
 
       const res = await fetch(
-        "http://localhost:8000/blog/api/v1/post/",
+        `${BACKEND_URL}/blog/api/v1/post/`,
         {
           method: "POST",
           credentials: "include", 

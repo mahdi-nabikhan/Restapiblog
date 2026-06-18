@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginForm.css";
-
+import BACKEND_URL from '../../../Utils'
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +20,7 @@ export default function LoginForm() {
       setSuccess("");
 
       const res = await fetch(
-        "http://localhost:8000/accounts/api/v1/jwt/custom/",
+       `${BACKEND_URL}/accounts/api/v1/jwt/custom/`,
         {
           method: "POST",
           credentials: "include",

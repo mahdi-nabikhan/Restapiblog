@@ -672,4 +672,14 @@ class ProfileDetail(GenericAPIView):
         else:
              return Response(serializer.errors,status=status.HTTP_404_NOT_FOUND)
         
-        
+    
+class CustomJwtRemoveCookies(GenericAPIView):
+    
+    
+    def post(self,request):
+        res = Response('user successfully loged out',status=status.HTTP_204_NO_CONTENT)
+        res.cookies.delete('access')
+        res.cookies.delete('refresh')
+        return res
+    
+    

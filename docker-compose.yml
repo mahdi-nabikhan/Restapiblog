@@ -35,11 +35,11 @@ services:
     build:
       context: ./backend
     container_name: backend-blog
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:9000
     volumes:
       - ./backend:/app
     ports:
-      - "8000:8000"
+      - "9000:9000"
     environment:
       - SECRET_KEY=test
       - DEBUG=True

@@ -1,7 +1,7 @@
 import jwt
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-# from mail_templated import EmailMessage
+from mail_templated import EmailMessage
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -74,11 +74,11 @@ class SendTokenActivationRegisterView(GenericAPIView):
             serializer.save()
             user = get_object_or_404(User, email=serializer.validated_data['email'])
 
-            # Generate JWT tokens for the user
+            
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
-            send_activation_email.delay(user.email, user.username, access_token)
-            # Prepare email message content
+            send_activation_email.delay(user.email, user.email, access_token)
+          
             message_body = f"""
                     Hello {user.email},
 
@@ -88,14 +88,19 @@ class SendTokenActivationRegisterView(GenericAPIView):
                     If you did not request this, please ignore this email.
                     """
 
-            # Send the email
-            email_message = EmailMessage('email/activation_email.tpl',
-                                         subject="Your Access Token",
-                                         from_email="noreply@example.com",
-                                         to=[serializer.validated_data['email']],
-                                         context={'token': refresh}
-                                         )
-            email_message.send()
+            
+
+            from mail_templated import EmailMessage
+
+            email = EmailMessage(
+                'email/activation_email.tpl',
+                {'token': str(access_token)},
+                'noreply@example.com',
+                to=[user.email],
+                )
+
+            email.send()
+            
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -350,7 +355,7 @@ class ChangePasswordView(UpdateAPIView):
             return Response(serializer.errors)
 
 
-class ProfileApiView(RetrieveUpdateAPIView):
+class ProfileApiView(GenericAPIView):
     """
         ProfileApiView allows an authenticated user to retrieve and update their profile.
 
@@ -397,14 +402,11 @@ class ProfileApiView(RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
     queryset = Profile.objects.all()
 
-    def get_queryset(self):
-        """
-                Override the default queryset to return only the current user's profile.
-                """
-        obj = get_object_or_404(Profile, pk=self.request.user.pk)
-        return obj
-
-
+  
+    def get(self,request):
+        obj = get_object_or_404(Profile, user=self.request.user)
+        serializer = self.serializer_class(instance=obj,context={'request':request})
+        return Response(serializer.data,status=status.HTTP_200_OK)
 class SendEmailView(GenericAPIView):
     """
         SendEmailView sends a test email to verify SMTP configuration (e.g., smtp4dev).
@@ -495,14 +497,14 @@ class SendEmailApiView(GenericAPIView):
         """
 
         # Send the email
-        email_message = EmailMessage(template_name='email/hello.tpl',
-                                     subject="Your Access Token",
-
-                                     from_email="noreply@example.com",
-                                     to=[email],
-                                     context={'token': refresh, 'user': request.user, 'access_token': access_token}
-                                     )
-        email_message.send()
+        send_mail(
+            subject='Test Email',
+            message='This is a test email from Django to smtp4dev.',
+            from_email='test@example.com',
+            recipient_list=['recipient@example.com'],
+            fail_silently=False
+        )
+       
 
         return Response({'message': 'Token sent via email'}, status=status.HTTP_200_OK)
 
@@ -566,8 +568,6 @@ class ActivationApiView(APIView):
             return Response(data={'detail': 'invalid token'}, status=status.HTTP_400_BAD_REQUEST)
         user = User.objects.get(pk=user_id)
         user.is_verified = True
-        if user.is_verified:
-            return Response({'detail': 'your account has been activated'})
         user.save()
         return Response(data={'detail': 'user has been activated'}, status=status.HTTP_200_OK)
 
@@ -672,4 +672,14 @@ class ProfileDetail(GenericAPIView):
         else:
              return Response(serializer.errors,status=status.HTTP_404_NOT_FOUND)
         
-        
+    
+class CustomJwtRemoveCookies(GenericAPIView):
+    
+    
+    def post(self,request):
+        res = Response('user successfully loged out',status=status.HTTP_204_NO_CONTENT)
+        res.cookies.delete('access')
+        res.cookies.delete('refresh')
+        return res
+    
+    

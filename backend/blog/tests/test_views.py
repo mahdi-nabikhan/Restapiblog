@@ -168,7 +168,7 @@ class TestCommentDetailAndDeleteAPI:
     # TEST PUT (UPDATE COMMENT)
     # =========================
     def test_update_comment(self):
-        url = f"/blog/api/v1/comment/{self.comment.pk}/"
+        url = f"/blog/api/v1/comment/detail/{self.comment.pk}/"
 
         data = {
             "content": "Updated comment"
@@ -186,7 +186,7 @@ class TestCommentDetailAndDeleteAPI:
     # TEST DELETE COMMENT
     # =========================
     def test_delete_comment(self):
-        url = f"/blog/api/v1/comment/{self.comment.pk}/"
+        url = f"/blog/api/v1/comment/detail/{self.comment.pk}/"
 
         response = self.client.delete(url)
 

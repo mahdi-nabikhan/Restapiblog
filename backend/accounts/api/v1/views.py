@@ -350,7 +350,7 @@ class ChangePasswordView(UpdateAPIView):
             return Response(serializer.errors)
 
 
-class ProfileApiView(RetrieveUpdateAPIView):
+class ProfileApiView(GenericAPIView):
     """
         ProfileApiView allows an authenticated user to retrieve and update their profile.
 
@@ -397,14 +397,11 @@ class ProfileApiView(RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
     queryset = Profile.objects.all()
 
-    def get_queryset(self):
-        """
-                Override the default queryset to return only the current user's profile.
-                """
-        obj = get_object_or_404(Profile, pk=self.request.user.pk)
-        return obj
-
-
+  
+    def get(self,request):
+        obj = get_object_or_404(Profile, user=self.request.user)
+        serializer = self.serializer_class(instance=obj,context={'request':request})
+        return Response(serializer.data,status=status.HTTP_200_OK)
 class SendEmailView(GenericAPIView):
     """
         SendEmailView sends a test email to verify SMTP configuration (e.g., smtp4dev).

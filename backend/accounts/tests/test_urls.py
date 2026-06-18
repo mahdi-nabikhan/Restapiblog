@@ -149,3 +149,61 @@ class TestAccountAPI:
         response = self.client.get(url)
         assert response.status_code == 200
 
+
+
+@pytest.mark.django_db
+class TestRegisterAPI:
+
+    def setup_method(self):
+        self.client = APIClient()
+        self.url = reverse("accounts:api-v1:register")
+
+        self.valid_payload = {
+            "email": "testuser@example.com",
+            "password": "StrongPass123!",
+            "password2": "StrongPass123!"
+        }
+
+
+    def test_register_success(self):
+        response = self.client.post(
+            self.url,
+            self.valid_payload,
+            format="json"
+        )
+
+        assert response.status_code == 201
+        assert response.data["email"] == self.valid_payload["email"]
+
+        # user must be created
+        assert User.objects.filter(email=self.valid_payload["email"]).exists()
+
+
+    def test_register_password_mismatch(self):
+        payload = self.valid_payload.copy()
+        payload["password2"] = "WrongPassword"
+
+        response = self.client.post(
+            self.url,
+            payload,
+            format="json"
+        )
+
+        assert response.status_code == 400
+        assert "password2" in response.data or "non_field_errors" in response.data
+
+
+    def test_register_duplicate_email(self):
+        User.objects.create_user(
+            email=self.valid_payload["email"],
+            password=self.valid_payload["password"]
+        )
+
+        response = self.client.post(
+            self.url,
+            self.valid_payload,
+            format="json"
+        )
+
+        assert response.status_code == 400
+        assert "email" in response.data

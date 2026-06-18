@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import './PostListCache.css'
 import { Link } from "react-router-dom";
+import BACKEND_URL from "../../../Utils";
 const PostListCache = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,7 +11,7 @@ const PostListCache = () => {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:8000/blog/api/v1/post/list/cache/");
+      const res = await fetch(`${BACKEND_URL}/blog/api/v1/post/list/cache/`);
 
       if (!res.ok) {
         throw new Error("Failed to fetch posts");

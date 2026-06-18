@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import "./Comments.css";
 import CommentCard from "../CommentCard/CommentCard";
 import { AuthContext } from "../../../Context/AuthContex";
+import BACKEND_URL from "../../../Utils";
 
 
 export default function Comments({ id }) {
@@ -20,7 +21,7 @@ export default function Comments({ id }) {
   const getComments = async () => {
     try {
       const res = await fetch(
-        `http://localhost:8000/blog/api/v1/comments/${id}/`,
+        `${BACKEND_URL}/blog/api/v1/comments/${id}/`,
         {
           method: "GET",
           credentials: "include",
@@ -50,7 +51,7 @@ export default function Comments({ id }) {
       setMessage("");
 
       const res = await fetch(
-        `http://localhost:8000/blog/api/v1/comments/${id}/`,
+        `${BACKEND_URL}/blog/api/v1/comments/${id}/`,
         {
           method: "POST",
           credentials: "include",
@@ -103,7 +104,7 @@ export default function Comments({ id }) {
 
     try {
       const res = await fetch(
-        `http://localhost:8000/blog/api/v1/comment/${selectedComment.id}/reply/`,
+        `${BACKEND_URL}/blog/api/v1/comment/${selectedComment.id}/reply/`,
         {
           method: "POST",
           credentials: "include",

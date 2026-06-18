@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./PostList.css";
 import Pagination from "../../../Components/Pagination/Pagination";
-
+import BACKEND_URL from "../../../Utils";
 export default function PostList() {
   const [posts,setPosts]=useState([])
   const [page, setPage] = useState(1);
@@ -13,7 +13,7 @@ export default function PostList() {
   const fetchPosts = async () => {
     try {
       const res = await fetch(
-        `http://localhost:8000/blog/api/v1/post/?page=${page}&page_size=${pageSize}`,
+        `${BACKEND_URL}/blog/api/v1/post/?page=${page}&page_size=${pageSize}`,
         {
           credentials:'include',
           method: "GET",

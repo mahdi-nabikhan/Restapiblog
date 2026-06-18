@@ -153,10 +153,8 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "user": "1000/day",
-        "anon": "100/day",
         "login":'5/min',
-        'register':'3/hour'
+        'register':'1000/day'
     }
 }
 # email configuration

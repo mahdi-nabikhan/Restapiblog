@@ -94,7 +94,7 @@ services:
   # KIBANA (same mirror family)
   # ======================
   kibana:
-    image: mirror2.chabokan.net/elastic/kibana:8.19.16
+    image: mirror2.chabokan.net/elastic/kibana:8.17.0
     container_name: kibana
     depends_on:
       - elasticsearch

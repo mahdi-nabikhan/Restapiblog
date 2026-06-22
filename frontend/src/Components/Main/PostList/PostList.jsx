@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import "./PostList.css";
 import Pagination from "../../../Components/Pagination/Pagination";
-import BACKEND_URL from "../../../Utils";
 export default function PostList() {
 
   const [page, setPage] = useState(1);

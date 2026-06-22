@@ -39,13 +39,13 @@ INSTALLED_APPS = [
     'accounts',
     'blog',
     'rest_framework',
-    #'django_filters',
+    'django_filters',
     'drf_yasg',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
-    #'mail_templated',
-    'corsheaders'
-
+    'mail_templated',
+    'corsheaders',
+    'django-elasticsearch-dsl'
 ]
 
 MIDDLEWARE = [
@@ -183,7 +183,16 @@ CACHES = {
         }
     }
 }
+# cors headers config
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# elastic search config
+
+ELASTICSEARCH_DSL ={
+    'default':{
+        'hosts':'elasticsearch:9200'
+    }
+}

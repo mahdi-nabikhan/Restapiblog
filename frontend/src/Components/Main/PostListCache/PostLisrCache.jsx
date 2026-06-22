@@ -1,42 +1,29 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import './PostListCache.css'
 import { Link } from "react-router-dom";
 import BACKEND_URL from "../../../Utils";
+const fetchPosts = async () => {
+  const res = await fetch(
+    `${BACKEND_URL}/blog/api/v1/post/list/cache/`
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch posts");
+  }
+
+  return res.json();
+};
+
 const PostListCache = () => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data: posts = [], isLoading, error } = useQuery({
+    queryKey: ["cached-posts"],
+    queryFn: fetchPosts,
+    staleTime: 1000 * 60 * 5, 
+  });
 
-  const fetchPosts = async () => {
-    try {
-      setLoading(true);
-
-      const res = await fetch(`${BACKEND_URL}/blog/api/v1/post/list/cache/`);
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch posts");
-      }
-
-      const data = await res.json();
-
-      setPosts(data);
-      setError(null);
-
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  if (loading) return <p>Loading posts...</p>;
-
+  if (isLoading) return <p>Loading posts...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
-
   return (
       <div className="container">
         <h2 className="title">Other  Posts</h2>

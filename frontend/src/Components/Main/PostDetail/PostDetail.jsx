@@ -1,52 +1,45 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import "./PostDetail.css";
 import BACKEND_URL from "../../../Utils";
+import { useQuery } from "@tanstack/react-query";
 const DEFAULT_IMAGE = "/images/default_image.PNG";
 
 export default function PostDetail({ id }) {
 
-
-  const [post, setPost] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const imageUrl =
-  post?.image
-    ? post.image.startsWith("http")
-      ? post.image
-      : `http://localhost:8000${post.image}`
-    : DEFAULT_IMAGE;
-
   const getPostDetail = async () => {
-    try {
-      const res = await fetch(
-        `${BACKEND_URL}/blog/api/v1/post/${id}/`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch post");
+    const res = await fetch(
+      `${BACKEND_URL}/blog/api/v1/post/${id}/`,
+      {
+        method: "GET",
+        credentials: "include",
       }
+    );
 
-      const data = await res.json();
-      setPost(data);
-    } catch (err) {
-      setError("Failed to load post.");
-    } finally {
-      setLoading(false);
+    if (!res.ok) {
+      throw new Error("Failed to fetch post");
     }
+
+    return res.json();
   };
 
-  useEffect(() => {
-    getPostDetail();
-  }, [id]);
 
-  if (loading) return <div className="loader">Loading...</div>;
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['post', id],
+    queryFn: getPostDetail,
+    enabled: !!id
+  })
+  const imageUrl =
+    data?.image
+      ? data.image.startsWith("http")
+        ? data.image
+        : `http://${BACKEND_URL}${data?.image}`
+      : DEFAULT_IMAGE;
+
+  if (isLoading) return <div className="loader">Loading...</div>;
   if (error) return <div className="error">{error}</div>;
-  if (!post) return <div className="empty">Post not found</div>;
+  if (!data) return <div className="empty">Post not found</div>;
+
+
 
   return (
     <div className="post-container">
@@ -57,7 +50,7 @@ export default function PostDetail({ id }) {
           <img
             className="post-image"
             src={imageUrl}
-            alt={post?.title || "Post image"}
+            alt={data?.title || "Post image"}
             onError={(e) => {
               e.target.onerror = null; // جلوگیری از loop
               e.target.src = DEFAULT_IMAGE;
@@ -66,29 +59,29 @@ export default function PostDetail({ id }) {
 
           {/* Content */}
           <div className="post-content">
-            <h1 className="post-title">{post.title}</h1>
+            <h1 className="post-title">{data.title}</h1>
 
             <div className="post-meta">
               <span>
-                Category: <b>{post.category?.name || "Uncategorized"}</b>
+                Category: <b>{data?.category?.name || "Uncategorized"}</b>
               </span>
               <span>
-                Status: <b>{post.status ? "Published" : "Draft"}</b>
+                Status: <b>{data?.status ? "Published" : "Draft"}</b>
               </span>
             </div>
 
             <div className="post-dates">
               <span>
                 Created:{" "}
-                {new Date(post.created_date).toLocaleDateString()}
+                {new Date(data?.created_date).toLocaleDateString()}
               </span>
               <span>
                 Updated:{" "}
-                {new Date(post.updated_date).toLocaleDateString()}
+                {new Date(data?.updated_date).toLocaleDateString()}
               </span>
             </div>
 
-            <p className="post-text">{post.content}</p>
+            <p className="post-text">{data?.content}</p>
           </div>
         </div>
       </div>

@@ -45,7 +45,7 @@ export default function Navbar() {
   // ======================
   const logout = async () => {
     try {
-      await fetch(`${BACKEND_URL}/accounts/api/v1/logout/`, {
+      await fetch(`${BACKEND_URL}/accounts/api/v1/jwt/custom/delete/`, {
         method: "POST",
         credentials: "include",
       });

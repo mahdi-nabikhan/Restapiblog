@@ -678,8 +678,8 @@ class CustomJwtRemoveCookies(GenericAPIView):
     
     def post(self,request):
         res = Response('user successfully loged out',status=status.HTTP_204_NO_CONTENT)
-        res.cookies.delete('access')
-        res.cookies.delete('refresh')
+        res.delete_cookie('access')
+        res.delete_cookie('refresh')
         return res
     
     

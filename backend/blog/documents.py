@@ -1,9 +1,9 @@
-from  django_elasticsearch_dsl import Decument
+from  django_elasticsearch_dsl import Document
 from django_elasticsearch_dsl.registries import registry
 from .models import *
 
 @registry.register_document
-class PostDocument (Decument):
+class PostDocument (Document):
     class Index:
         name = 'posts'
         settings = {

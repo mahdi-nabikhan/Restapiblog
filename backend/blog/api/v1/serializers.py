@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from blog.models import Post, Category,Comments
+from blog.models import Post, Category,Comments,PostImages
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -107,3 +107,9 @@ class CommentDetailSerializer(serializers.ModelSerializer):
         fields = ['content']
         
     
+class PostImagesSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = PostImages
+        fields = '__all__'
+        read_only_fields = ('post')
+      

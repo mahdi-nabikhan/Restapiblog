@@ -1,37 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BACKEND_URL from "../../../Utils";
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import "./PostList.css";
 
 export default function PostList() {
-  const getPosts = async () => {
-    const res = await fetch(
-      `${BACKEND_URL}/blog/api/v1/post/`,
-      {
-        credentials: "include",
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const getPosts = async () => {
+      try {
+        const res = await fetch(
+          `${BACKEND_URL}/blog/api/v1/post/`,
+          {
+            credentials: "include",
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch posts");
+        }
+
+        const data = await res.json();
+
+        console.log(data);
+
+        if (Array.isArray(data)) {
+          setPosts(data);
+        } else if (Array.isArray(data.results)) {
+          setPosts(data.results);
+        } else {
+          setPosts([]);
+        }
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-    );
+    };
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch posts");
-    }
-    console.log(res.json())
-    return res.json();
+    getPosts();
+  }, []);
 
-  };
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["posts"],
-    queryFn: getPosts,
-  });
-
-  if (isLoading) {
+  if (loading) {
     return <h2>Loading...</h2>;
   }
 
   if (error) {
-    return <h2>Error loading posts</h2>;
+    return <h2>{error}</h2>;
   }
 
   return (
@@ -39,7 +57,7 @@ export default function PostList() {
       <h2 className="posts-title">Latest Posts</h2>
 
       <div className="posts-grid">
-        {(data?.results || data || []).map((post) => (
+        {posts.map((post) => (
           <div className="post-card" key={post.id}>
             <img
               className="post-image"
@@ -50,11 +68,11 @@ export default function PostList() {
               }}
             />
 
-            <h3>Title: {post.title}</h3>
+            <h3>{post.title}</h3>
 
-            <p>Description: {post.snippet}</p>
+            <p>{post.snippet}</p>
 
-            <p>Published at: {post.created_date}</p>
+            <p>{post.created_date}</p>
 
             <Link to={`/post/${post.id}`}>
               Detail

@@ -191,8 +191,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 # elastic search config
 
-ELASTICSEARCH_DSL ={
-    'default':{
-        'hosts':'elasticsearch:9200'
-    }
-}
+# ELASTICSEARCH_DSL ={
+#     'default':{
+#         "hosts": "http://elasticsearch:9200"
+#     }
+# }

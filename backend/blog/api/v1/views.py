@@ -294,4 +294,27 @@ class PostListCacheAPIView(GenericAPIView):
         return Response(data)        
         
         
+
+
+class PostImageCreateAndListAPIView(GenericAPIView):
+    serializer_class = PostImagesSerializers
+    
+    
+    
+    def get(self,request,pk):
+        post = Post.objects.get(pk=pk,auther=request.user)
+        images = PostImages.objects.filter(post = post )
+        serializer = self.serializer_class(instance=images,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
+    def post(self,request,pk):
+        post = Post.objects.get(pk=pk,auther=request.user)
+        serializers = self.serializer_class(data=request.data)
+        if serializers.is_valid():
+            serializers.save(post=post)
+            return Response({'msg':'images successfully added'},status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializers.errors,status=status.HTTP_404_NOT_FOUND)
         
+    
+    

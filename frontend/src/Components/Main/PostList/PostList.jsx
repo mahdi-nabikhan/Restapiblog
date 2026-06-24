@@ -2,48 +2,19 @@ import React, { useEffect, useState } from "react";
 import BACKEND_URL from "../../../Utils";
 import { Link } from "react-router-dom";
 import "./PostList.css";
-
+import { useQuery } from "@tanstack/react-query";
 export default function PostList() {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const getPosts = async () => {
-      try {
-        const res = await fetch(
-          `${BACKEND_URL}/blog/api/v1/post/`,
-          {
-            credentials: "include",
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch posts");
-        }
-
-        const data = await res.json();
-
-        console.log(data);
-
-        if (Array.isArray(data)) {
-          setPosts(data);
-        } else if (Array.isArray(data.results)) {
-          setPosts(data.results);
-        } else {
-          setPosts([]);
-        }
-      } catch (err) {
-        console.error(err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getPosts();
-  }, []);
-
+  async function  getPosts(){
+    const res =await fetch(`${BACKEND_URL}/blog/api/v1/post` ,{
+      credentials :'include'
+    })
+    return await res.json()
+    
+  }
+  const {data,isLoading,error} = useQuery({
+    queryKey:['posts'],
+    queryFn:getPosts
+  })
   if (loading) {
     return <h2>Loading...</h2>;
   }
@@ -57,7 +28,7 @@ export default function PostList() {
       <h2 className="posts-title">Latest Posts</h2>
 
       <div className="posts-grid">
-        {posts.map((post) => (
+        {data?.map((post) => (
           <div className="post-card" key={post.id}>
             <img
               className="post-image"

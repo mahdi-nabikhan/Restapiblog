@@ -35,11 +35,11 @@ services:
     build:
       context: ./backend
     container_name: backend-blog
-    command: python manage.py runserver 0.0.0.0:9000
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/app
     ports:
-      - "9000:9000"
+      - "8000:8000"
     environment:
       - SECRET_KEY=test
       - DEBUG=True
@@ -47,7 +47,7 @@ services:
       - db
       - redis
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
       interval: 30s
       timeout: 10s
       retries: 5

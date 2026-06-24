@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'mail_templated',
     'corsheaders',
-    'django-elasticsearch-dsl'
+    # 'django_elasticsearch_dsl'
 ]
 
 MIDDLEWARE = [
@@ -191,8 +191,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 # elastic search config
 
-ELASTICSEARCH_DSL ={
-    'default':{
-        'hosts':'elasticsearch:9200'
-    }
-}
+# ELASTICSEARCH_DSL ={
+#     'default':{
+#         "hosts": "http://elasticsearch:9200"
+#     }
+# }

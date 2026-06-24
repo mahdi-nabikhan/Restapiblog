@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import BACKEND_URL from "../../../Utils";
 export default function UserPostList() {
    const UserPosts= async function(){
-      const res = await fetch (`${BACKEND_URL}//blog/api/v1/user/post/`,{
+      const res = await fetch (`${BACKEND_URL}/blog/api/v1/user/post/`,{
         credentials:'include'
       })
       const data = await res.json();

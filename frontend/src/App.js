@@ -8,7 +8,15 @@ import {
 import './App.css';
 import { useRoutes } from 'react-router-dom';
 import routes from './routes';
-const queryClient = new QueryClient({})
+const queryClient = new QueryClient({
+  defaultOptions:{
+    queries:{
+      gcTime:5000,
+      staleTime:10000
+    }
+    
+  }
+})
 function App() {
   
   const router = useRoutes(routes)

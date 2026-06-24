@@ -15,12 +15,12 @@ export default function PostList() {
     queryKey:['posts'],
     queryFn:getPosts
   })
-  if (loading) {
+  if (isLoading) {
     return <h2>Loading...</h2>;
   }
 
   if (error) {
-    return <h2>{error}</h2>;
+    return <h2>{error.message}</h2>;
   }
 
   return (

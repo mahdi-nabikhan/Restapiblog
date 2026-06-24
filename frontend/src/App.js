@@ -12,8 +12,11 @@ import routes from './routes';
 const queryClient = new QueryClient({
   defaultOptions:{
     queries:{
-      gcTime:5000,
-      staleTime:10000
+      gcTime:50000,
+      staleTime:10000,
+      retry:false,
+      refetchInterval:3000,
+      
     }
     
   }

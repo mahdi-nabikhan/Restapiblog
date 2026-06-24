@@ -39,6 +39,7 @@ class Category(models.Model):
     
     
 class Comments(models.Model):
+    """a model for commnets of a post """
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     post = models.ForeignKey(Post,on_delete=models.CASCADE)
     
@@ -48,5 +49,10 @@ class Comments(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    
+class PostImages(models.Model):
+    """ this is model for create and store more images related with single posts"""
+    post = models.ForeignKey(Post,on_delete=models.CASCADE)
+    images = models.ImageField(upload_to='/images')
     
     

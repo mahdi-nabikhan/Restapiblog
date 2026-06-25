@@ -111,5 +111,5 @@ class PostImagesSerializers(serializers.ModelSerializer):
     class Meta:
         model = PostImages
         fields = '__all__'
-        read_only_fields = ('post')
+        read_only_fields = ('post',)
       

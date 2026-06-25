@@ -267,7 +267,7 @@ class UserPostListApiView(GenericAPIView):
     
     def get(self,request):
         obj =  Post.objects.filter(auther=request.user)
-        serializer = self.serializer_class(instance=obj,many=True)
+        serializer = self.serializer_class(instance=obj,many=True,context={'request':request})
         return Response(serializer.data,status=status.HTTP_200_OK)
 
 

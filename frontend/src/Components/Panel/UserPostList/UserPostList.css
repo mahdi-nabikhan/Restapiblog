@@ -1,105 +1,77 @@
-/* مهم‌ترین بخش برای جلوگیری از overflow */
-.user-posts-wrapper {
-    width: 100%;
-    min-width: 0;   /* 🔥 جلوگیری از break در flex layout */
-    display: flex;
-    justify-content: center;
-  }
-  
-  /* کارت اصلی */
-  .user-posts {
-    width: 100%;
-    max-width: 900px;
-  
-    min-width: 0;   /* 🔥 خیلی مهم برای sidebar layouts */
-  
-    box-sizing: border-box;
-    padding: 20px;
-  }
-  
-  /* لیست */
-  .user-posts__list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  
-    width: 100%;
-    min-width: 0;
-  }
-  
-  /* آیتم پست */
-  .post-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  
-    width: 100%;
-    min-width: 0;   /* 🔥 مهم‌ترین fix layout bug */
-  
-    padding: 12px;
-    background: #fff;
-    border-radius: 12px;
-  
-    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-  
-    overflow: hidden; /* جلوگیری از بیرون زدن متن */
-  }
-  
-  /* تصویر */
-  .post-item img {
-    width: 70px;
-    height: 70px;
-    border-radius: 10px;
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-  
-  /* متن */
-  .post-info {
-    flex: 1;
-    min-width: 0; /* 🔥 جلوگیری از overflow متن */
-  }
-  
-  .post-info h3 {
-    margin: 0;
-    font-size: 16px;
-  
+.posts-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.posts-table thead {
+  background: #1e293b;
+  color: white;
+}
+
+.posts-table th {
+  padding: 16px;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.posts-table td {
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.posts-table tbody tr {
+  transition: all 0.3s ease;
+}
+
+.posts-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.posts-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.posts-table a {
+  display: inline-block;
+  text-decoration: none;
+  background: #2563eb;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  margin-right: 8px;
+  transition: 0.3s;
+  font-size: 14px;
+}
+
+.posts-table a:hover {
+  background: #1d4ed8;
+}
+
+.posts-table button {
+  border: none;
+  background: #dc2626;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 14px;
+}
+
+.posts-table button:hover {
+  background: #b91c1c;
+}
+
+@media (max-width: 768px) {
+  .posts-table {
+    display: block;
+    overflow-x: auto;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
-  
-  .post-info p {
-    font-size: 13px;
-    color: #666;
-  
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  /* دکمه‌ها */
-  .post-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  
-    flex-shrink: 0;
-  }
-  
-  .post-actions button {
-    border: none;
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  
-  .post-actions button:first-child {
-    background: #4a90e2;
-    color: white;
-  }
-  
-  .post-actions button:last-child {
-    background: #e74c3c;
-    color: white;
-  }
+}

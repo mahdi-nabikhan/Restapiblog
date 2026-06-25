@@ -53,6 +53,6 @@ class Comments(models.Model):
 class PostImages(models.Model):
     """ this is model for create and store more images related with single posts"""
     post = models.ForeignKey(Post,on_delete=models.CASCADE)
-    images = models.ImageField(upload_to='/images')
+    images = models.ImageField(upload_to='images/')
     
     

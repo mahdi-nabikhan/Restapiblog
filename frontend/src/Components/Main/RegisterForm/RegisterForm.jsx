@@ -2,6 +2,39 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./RegisterForm.css";
 import BACKEND_URL from "../../../Utils";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+
+
+const registerUser = async (data) => {
+  const res = await fetch(
+    `${BACKEND_URL}/accounts/api/v1/register/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    credentials: 'include',
+    body: JSON.stringify({
+      email: data.email,
+      passwod: data.password,
+      password2: data.confirmPassword
+
+    })
+  }
+
+  )
+  if (!res.ok) {
+    throw new Error('register failed')
+  }
+  return res.json()
+
+
+
+
+
+}
+
+
 export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

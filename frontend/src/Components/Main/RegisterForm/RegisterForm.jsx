@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 
 
 const registerUser = async (data) => {
+
   const res = await fetch(
     `${BACKEND_URL}/accounts/api/v1/register/`, {
     method: "POST",
@@ -16,7 +17,7 @@ const registerUser = async (data) => {
     credentials: 'include',
     body: JSON.stringify({
       email: data.email,
-      passwod: data.password,
+      password: data.password,
       password2: data.confirmPassword
 
     })
@@ -27,85 +28,56 @@ const registerUser = async (data) => {
     throw new Error('register failed')
   }
   return res.json()
-
-
-
-
-
 }
 
 
 export default function RegisterForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { register, handleSubmit, formState: { errors }, } = useForm();
+  const mutaions = useMutation({
+    mutationFn: registerUser,
+    onSuccess: () => {
 
-  const navigate = useNavigate();
+      setSuccess("Register successful 🎉 Welcome");
 
-  const submitHandler = async (e) => {
-    e.preventDefault();
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
+    },
+    onError: (error) => {
+      setError(error.message)
+
+    }
+  })
+
+
+
+
+  const submitHandler = (data) => {
 
     setError("");
     setSuccess("");
-
-    // validation
-    if (!email || !password || !confirmPassword) {
+    if (!data.email || !data.password || !data.confirmPassword) {
       setError("All fields are required.");
       return;
     }
 
-    if (password !== confirmPassword) {
+    if (data.password !== data.confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
-    try {
-      setLoading(true);
 
-      const res = await fetch(
-        `${BACKEND_URL}/accounts/api/v1/register/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-            password2: confirmPassword,
-          }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data?.detail || "Registration failed");
-      }
-
-      setSuccess("Account created successfully 🎉");
-      setTimeout(() => {
-        navigate("/");
-      }, 5000);
+    mutaions.mutate(data)
 
 
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
     <div className="register-container">
-      <form className="register-card" onSubmit={submitHandler}>
+      <form className="register-card" onSubmit={handleSubmit(submitHandler)}>
         <h2>Create Account</h2>
 
         {error && <div className="error">{error}</div>}
@@ -114,29 +86,42 @@ export default function RegisterForm() {
         <label>Email</label>
         <input
           type="email"
-          value={email}
-          placeholder="Enter email"
-          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
+          {...register("email", {
+            required: "Email is required",
+          })}
         />
-
+        {errors.email && (
+          <p className="error">
+            {errors.email.message}
+          </p>
+        )}
         <label>Password</label>
         <input
           type="password"
-          value={password}
-          placeholder="Enter password"
-          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter your Password"
+          {...register("password", {
+            required: "Password is required",
+          })}
         />
-
+        {errors.password && (
+          <p className="error">
+            {errors.password.message}
+          </p>
+        )}
         <label>Confirm Password</label>
         <input
           type="password"
-          value={confirmPassword}
-          placeholder="Confirm password"
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          placeholder="Confirm your Password"
+          {...register("confirmPassword", {
+            required: "Confirm Password is required",
+          })}
         />
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Creating..." : "Register"}
+        {errors.confirmPassword && (
+          <p className="errors">{errors.confirmPassword.message}</p>
+        )}
+        <button type="submit" disabled={mutaions.isPending}>
+          {mutaions.isPending ? "Creating..." : "Register"}
         </button>
       </form>
     </div>

@@ -37,9 +37,15 @@ export default function AddPosts() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm()
   const mutation = useMutation({
     mutationFn: createPost,
-    onSuccess: () => { reset(), setMessage('Post created successfully 🚀') },
-    
-    onError: () => { reset(), setMessage("Error creating post ❌") }
+    onSuccess: () => {
+      reset();
+      setMessage('Post created successfully 🚀')
+    },
+
+    onError: () => {
+      reset();
+      setMessage("Error creating post ❌")
+    }
   })
   const submitHandler = (data) => {
 

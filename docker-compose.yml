@@ -144,8 +144,8 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
+        
     mem_limit: 300MB
 # ======================
 # VOLUMES

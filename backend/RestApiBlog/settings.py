@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 # from decouple import config
 from pathlib import Path
-
+from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -196,3 +196,14 @@ CORS_ALLOW_CREDENTIALS = True
 #         "hosts": "http://elasticsearch:9200"
 #     }
 # }
+
+#SIMPLE JWT CONFIG
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME":timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME":timedelta(days=7),
+    "ROTATE_REFRESH_TOKEN":False,
+    "UPDATE_LAST_LOGIN":False,
+    "ALGORITM":'HS256',
+    "AUTH_HEADER_TYPES":("Bearer",),
+    
+}

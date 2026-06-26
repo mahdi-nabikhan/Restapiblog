@@ -15,7 +15,7 @@ import PostUpdate from "./Pages/PostUpdate/PostUpdatePage"
 import ProfilePage from "./Pages/ProfilePage/ProfilePage"
 import Register from "./Pages/Register/Register"
 import UpdateProfilePage from "./Pages/UpdateProfilePage/UpdateProfilePage"
-
+import NotFound from "./Components/Main/NotFound/NotFound"
 
 const routes = [{
     path: '/', element: <MainLayout />, children: [

@@ -33,7 +33,7 @@ export default function PostUpdate() {
   const { register, handleSubmit, formState: { errors }, } = useForm();
   const mutations = useMutation(
     {
-      mutationFn: UpdatePost,
+      mutationFn: updatePost,
       onError: (error) => {
         setError(error.message)
       },

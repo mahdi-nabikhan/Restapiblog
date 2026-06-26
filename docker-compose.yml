@@ -17,6 +17,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    mem_limit: 200MB
 
   # ======================
   # REDIS
@@ -27,7 +28,7 @@ services:
     ports:
       - "6379:6379"
     command: redis-server --save 60 1 --loglevel warning
-
+    mem_limit: 100MB
   # ======================
   # BACKEND
   # ======================
@@ -51,7 +52,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-      
+    mem_limit: 300MB
 
   # ======================
   # CELERY WORKER
@@ -67,6 +68,7 @@ services:
       - backend
       - redis
       - db
+    mem_limit: 256MB
 
   # ======================
   # SMTP4DEV
@@ -78,7 +80,7 @@ services:
       - "5000:80"
       - "25:25"
       - "143:143"
-
+    mem_limit: 100MB
   # ======================
   # ELASTICSEARCH (MIRROR YOU USE)
   # ======================
@@ -95,7 +97,7 @@ services:
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     restart: unless-stopped
-
+    mem_limit: 700MB
   # ======================
   # KIBANA (same mirror family)
   # ======================
@@ -109,7 +111,7 @@ services:
     ports:
       - "5601:5601"
     restart: unless-stopped
-
+    mem_limit: 350MB
   # ======================
   # LOGSTASH (mirror aligned)
   # ======================
@@ -127,7 +129,7 @@ services:
     environment:
       - LS_JAVA_OPTS=-Xms256m -Xmx256m
     restart: unless-stopped
-
+    mem_limit: 284MB
   # ======================
   # FRONTEND
   # ======================
@@ -144,6 +146,7 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+    mem_limit: 300MB
 # ======================
 # VOLUMES
 # ======================

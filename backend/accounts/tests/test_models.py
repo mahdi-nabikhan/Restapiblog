@@ -1,11 +1,14 @@
 import pytest
 from accounts.models import User, Profile
 
+
 @pytest.mark.django_db
 class TestUserModel:
 
     def test_create_user_success(self):
-        user = User.objects.create_user(email="test@example.com", password="securepassword")
+        user = User.objects.create_user(
+            email="test@example.com", password="securepassword"
+        )
         assert user.email == "test@example.com"
         assert user.check_password("securepassword") is True
         assert user.is_active is True
@@ -13,7 +16,9 @@ class TestUserModel:
         assert not user.is_superuser
 
     def test_create_superuser_success(self):
-        admin = User.objects.create_superuser(email="admin@example.com", password="adminpass")
+        admin = User.objects.create_superuser(
+            email="admin@example.com", password="adminpass"
+        )
         assert admin.is_superuser is True
         assert admin.is_staff is True
         assert admin.is_active is True

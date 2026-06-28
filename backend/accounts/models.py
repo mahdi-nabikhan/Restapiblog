@@ -1,6 +1,6 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, Permission, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -16,7 +16,7 @@ class UserManager(BaseUserManager):
         create and save a user with the given email and password.
         """
         if not email:
-            raise ValueError('Users must have an email address')
+            raise ValueError("Users must have an email address")
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -28,14 +28,14 @@ class UserManager(BaseUserManager):
         """
         create and save a superuser with the given email and password.
         """
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active", True)
 
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError('Superuser must have is_staff=True.')
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError('Superuser must have is_superuser=True.')
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
         return self.create_user(email, password, **extra_fields)
 
 
@@ -44,15 +44,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     """
     Custom user model that supports using email instead of username.
     """
+
     email = models.EmailField(max_length=255, unique=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    is_verified = models.BooleanField(default=False,null=True,blank=True)
+    is_verified = models.BooleanField(default=False, null=True, blank=True)
     is_superuser = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
 
-    created_date = models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    created_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_date = models.DateTimeField(auto_now=True)
 
     objects = UserManager()
@@ -78,6 +79,7 @@ class Profile(models.Model):
         updated_date (DateTimeField): The datetime the profile was last updated.
 
     """
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     first_name = models.CharField(max_length=250)

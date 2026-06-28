@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Profile.css";
 import BACKEND_URL from "../../../Utils";
+import {Link} from 'react-router-dom'
 
 export default function Profile() {
   const [profile, setProfile] = useState(null);
@@ -64,9 +65,8 @@ export default function Profile() {
         </div>
 
         <div className="profile__footer">
-          <button className="profile__btn">
-            Edit Profile
-          </button>
+          <Link to = {`panel/profile/edit`}>Edit Your Profile</Link>
+              
         </div>
       </div>
     </div>

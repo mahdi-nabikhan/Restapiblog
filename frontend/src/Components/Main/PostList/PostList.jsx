@@ -8,9 +8,10 @@ export default function PostList() {
     const res =await fetch(`${BACKEND_URL}/blog/api/v1/post` ,{
       credentials :'include'
     })
-    data=await res.json()
-    console.log(data)
-    return data
+    const responseData = await res.json();
+    console.log(responseData)
+
+    return responseData
     
   }
   const {data,isLoading,error} = useQuery({

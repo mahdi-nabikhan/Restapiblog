@@ -14,16 +14,23 @@ const updatePost = async (data) => {
   if (data.image?.[0]) {
     formData.append("image", data.image[0]);
   }
-  const res = await fetch(`${BACKEND_URL}/blog/api/v1/post/detail/${data.id}`, {
-    method: 'PUT',
-    credentials: 'include',
-    body: formData
-  })
-  const responseData = await res.json();
-  if (!res.ok) {
-    throw new Error(responseData?.detail ||"updateing a post is ")
+  const res = await fetch(
+  `${BACKEND_URL}/blog/api/v1/post/${data.id}/`,
+  {
+    method: "PUT",
+    credentials: "include",
+    body: formData,
   }
-  return await res.json()
+);
+
+console.log("status:", res.status);
+console.log("content-type:", res.headers.get("content-type"));
+
+const text = await res.text();
+
+console.log(text);
+
+return text;
 }
 
 export default function PostUpdate() {

@@ -11,6 +11,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from .paginations import DefaultPagination
 from django.core.cache import cache
 import random
+from django.shortcuts import get_object_or_404
 
 class PostListView(GenericAPIView):
     """
@@ -273,6 +274,61 @@ class UserPostListApiView(GenericAPIView):
 
 
 class PostListCacheAPIView(GenericAPIView):
+    """
+    Cached Random Posts API
+
+    Provides a cached collection of randomly selected posts
+    to reduce database load and improve response times for
+    frequently accessed content sections such as:
+
+        - Homepage featured posts
+        - Recommended posts
+        - Trending content blocks
+        - Discover sections
+
+    Behavior:
+        1. Attempts to retrieve serialized post data from cache.
+        2. If cache exists, returns cached data immediately.
+        3. If cache is missing:
+            - Randomly selects up to 6 posts from the database.
+            - Preserves the randomized order.
+            - Serializes the selected posts.
+            - Stores the result in cache for future requests.
+        4. Returns the serialized post collection.
+
+    Cache:
+        Key:
+            post_list
+
+        Timeout:
+            20 minutes (1200 seconds)
+
+    Methods:
+        GET
+
+    Success Responses:
+        200 OK
+
+        [
+            {
+                "id": 1,
+                "title": "Example Post",
+                "content": "...",
+                "image": "...",
+                "created_date": "..."
+            }
+        ]
+
+    Edge Cases:
+        - Returns an empty list when no posts exist.
+        - Returns fewer than 6 posts when the database
+          contains less than 6 records.
+
+    Performance Notes:
+        - Minimizes repetitive database queries through caching.
+        - Suitable for high-traffic public endpoints.
+        - Randomization occurs only when cache is regenerated.
+    """
     serializer_class = PostSerializer
     
     def get(self,request):
@@ -297,12 +353,54 @@ class PostListCacheAPIView(GenericAPIView):
 
 
 class PostImageCreateAndListAPIView(GenericAPIView):
+    """
+    Post Image Management API
+
+    This endpoint provides functionality for managing
+    additional images related to a user's post.
+
+    Features:
+    - List all images belonging to a specific post.
+    - Upload new images to an existing post.
+    - Restrict access to the post owner.
+
+    Supported Methods:
+        GET:
+            Retrieve all images attached to the target post.
+
+        POST:
+            Upload and attach a new image to the target post.
+
+    Authentication:
+        JWT Authentication required.
+
+    Authorization:
+        Only the owner of the post can access or modify
+        its associated images.
+
+    URL Parameters:
+        pk (int):
+            Primary key of the target post.
+
+    Request Content-Type:
+        multipart/form-data
+
+    Success Responses:
+        200 OK
+        201 CREATED
+
+    Error Responses:
+        400 BAD REQUEST
+        401 UNAUTHORIZED
+        403 FORBIDDEN
+        404 NOT FOUND
+    """
     serializer_class = PostImagesSerializers
     
     
     
     def get(self,request,pk):
-        post = Post.objects.get(pk=pk,auther=request.user)
+        post = get_object_or_404(Post,pk=pk,author=request.user)
         images = PostImages.objects.filter(post = post )
         serializer = self.serializer_class(instance=images,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)

@@ -148,6 +148,21 @@ services:
         
     mem_limit: 300MB
 # ======================
+# LOCUST
+# ======================
+  master:
+    image : locustio/locust
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./backend/locust:/mnt/locust
+    command: -f /mnt/locust/locustfile.py --master -H http://backend:8089
+  locust_worker:
+    image: locustio/locust
+    volumes:
+      - ./:/mnt/locust
+    command: -f /mnt/locust/locustfile.py --worker --master-host master
+# ======================
 # VOLUMES
 # ======================
 volumes:

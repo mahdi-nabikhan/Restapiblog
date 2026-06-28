@@ -13,4 +13,3 @@
 #     class Django:
 #         model=Post
 #         fields = ['title']
-    

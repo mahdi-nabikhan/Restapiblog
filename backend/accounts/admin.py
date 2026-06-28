@@ -6,23 +6,51 @@ from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
 class CustomUserAdmin(BaseUserAdmin):
     model = User
-    list_display = ('email', 'is_superuser', 'is_active',)
-    list_filter = ('is_superuser', 'is_active')
-    search_fields = ('email',)
-    ordering = ('email',)
+    list_display = (
+        "email",
+        "is_superuser",
+        "is_active",
+    )
+    list_filter = ("is_superuser", "is_active")
+    search_fields = ("email",)
+    ordering = ("email",)
 
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions','is_verified')}),
-        ('Important dates', {'fields': ('last_login',)}),
+        (None, {"fields": ("email", "password")}),
+        (
+            "Permissions",
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                    "is_verified",
+                )
+            },
+        ),
+        ("Important dates", {"fields": ("last_login",)}),
     )
 
     add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'is_active', 'is_staff', 'is_superuser','is_verified '),
-        }),
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "email",
+                    "password1",
+                    "password2",
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "is_verified ",
+                ),
+            },
+        ),
     )
+
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -51,17 +79,15 @@ class ProfileAdmin(admin.ModelAdmin):
     )
 
     fieldsets = (
-        ("User Info", {
-            "fields": ("user",)
-        }),
-        ("Personal Info", {
-            "fields": ("first_name", "last_name", "image", "description")
-        }),
-        ("Timestamps", {
-            "fields": ("created_date", "updated_date")
-        }),
+        ("User Info", {"fields": ("user",)}),
+        (
+            "Personal Info",
+            {"fields": ("first_name", "last_name", "image", "description")},
+        ),
+        ("Timestamps", {"fields": ("created_date", "updated_date")}),
     )
 
     ordering = ("-updated_date",)
-admin.site.register(User, CustomUserAdmin)
 
+
+admin.site.register(User, CustomUserAdmin)

@@ -46,18 +46,10 @@ class PostAdmin(admin.ModelAdmin):
     )
 
     fieldsets = (
-        ("Main Info", {
-            "fields": ("title", "content", "image")
-        }),
-        ("Relations", {
-            "fields": ("auther", "category")
-        }),
-        ("Status", {
-            "fields": ("status", "published_date")
-        }),
-        ("Timestamps", {
-            "fields": ("created_date", "updated_date")
-        }),
+        ("Main Info", {"fields": ("title", "content", "image")}),
+        ("Relations", {"fields": ("auther", "category")}),
+        ("Status", {"fields": ("status", "published_date")}),
+        ("Timestamps", {"fields": ("created_date", "updated_date")}),
     )
 
     ordering = ("-created_date",)
@@ -93,18 +85,10 @@ class CommentsAdmin(admin.ModelAdmin):
     )
 
     fieldsets = (
-        ("Relation", {
-            "fields": ("user", "post")
-        }),
-        ("Content", {
-            "fields": ("content",)
-        }),
-        ("Status", {
-            "fields": ("published",)
-        }),
-        ("Timestamps", {
-            "fields": ("created_at", "updated_at")
-        }),
+        ("Relation", {"fields": ("user", "post")}),
+        ("Content", {"fields": ("content",)}),
+        ("Status", {"fields": ("published",)}),
+        ("Timestamps", {"fields": ("created_at", "updated_at")}),
     )
 
     ordering = ("-created_at",)

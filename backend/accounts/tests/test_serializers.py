@@ -38,7 +38,9 @@ class TestUserRegistrationSerializer:
         assert "password2" in serializer.errors
 
     def test_email_already_registered(self, django_user_model):
-        django_user_model.objects.create_user(email="exists@example.com", password="pass123")
+        django_user_model.objects.create_user(
+            email="exists@example.com", password="pass123"
+        )
         data = {
             "email": "exists@example.com",
             "password": "StrongPass123!",
@@ -63,7 +65,9 @@ class TestUserRegistrationSerializer:
 class TestCustomAuthTokenSerializer:
 
     def test_valid_credentials(self, django_user_model):
-        user = django_user_model.objects.create_user(email="auth@example.com", password="pass123")
+        user = django_user_model.objects.create_user(
+            email="auth@example.com", password="pass123"
+        )
         data = {"email": "auth@example.com", "password": "pass123"}
         serializer = CustomAuthTokenSerializer(data=data, context={"request": None})
         assert serializer.is_valid(), serializer.errors
@@ -73,15 +77,22 @@ class TestCustomAuthTokenSerializer:
         data = {"email": "noone@example.com", "password": "wrong"}
         serializer = CustomAuthTokenSerializer(data=data, context={"request": None})
         assert not serializer.is_valid()
-        assert "non_field_errors" in serializer.errors or "authorization" in serializer.errors
+        assert (
+            "non_field_errors" in serializer.errors
+            or "authorization" in serializer.errors
+        )
 
 
 @pytest.mark.django_db
 class TestCustomObtainPairSerializer:
 
     def test_token_contains_user_info(self, django_user_model):
-        user = django_user_model.objects.create_user(email="jwtuser@example.com", password="pass123")
-        serializer = CustomObtainPairSerializer(data={"email": user.email, "password": "pass123"})
+        user = django_user_model.objects.create_user(
+            email="jwtuser@example.com", password="pass123"
+        )
+        serializer = CustomObtainPairSerializer(
+            data={"email": user.email, "password": "pass123"}
+        )
         assert serializer.is_valid(), serializer.errors
         data = serializer.validated_data
         assert "access" in data
@@ -127,7 +138,9 @@ class TestChangePasswordSerializer:
 class TestProfileSerializer:
 
     def test_serialize_profile(self, django_user_model):
-        user = django_user_model.objects.create_user(email="profiletest@example.com", password="pass123")
+        user = django_user_model.objects.create_user(
+            email="profiletest@example.com", password="pass123"
+        )
         profile = Profile.objects.get(user=user)
         serializer = ProfileSerializer(instance=profile)
         data = serializer.data
@@ -138,18 +151,24 @@ class TestProfileSerializer:
 class TestActivationResendSerializer:
 
     def test_valid_email_not_verified(self, django_user_model):
-        user = django_user_model.objects.create_user(email="notverified@example.com", password="pass123", is_verified=False)
+        user = django_user_model.objects.create_user(
+            email="notverified@example.com", password="pass123", is_verified=False
+        )
         serializer = ActivationResendSerializer(data={"email": user.email})
         assert serializer.is_valid()
         assert serializer.validated_data["user"] == user
 
     def test_email_not_registered(self):
-        serializer = ActivationResendSerializer(data={"email": "nonexistent@example.com"})
+        serializer = ActivationResendSerializer(
+            data={"email": "nonexistent@example.com"}
+        )
         assert not serializer.is_valid()
         assert "email" in serializer.errors
 
     def test_email_already_verified(self, django_user_model):
-        user = django_user_model.objects.create_user(email="verified@example.com", password="pass123", is_verified=True)
+        user = django_user_model.objects.create_user(
+            email="verified@example.com", password="pass123", is_verified=True
+        )
         serializer = ActivationResendSerializer(data={"email": user.email})
         assert not serializer.is_valid()
         assert "email" in serializer.errors

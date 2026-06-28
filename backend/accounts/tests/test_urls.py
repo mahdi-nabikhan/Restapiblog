@@ -42,9 +42,7 @@ class TestAccountAPI:
 
             refresh_url = reverse("accounts:api-v1:jwt-refresh")
 
-            response = self.client.post(
-                refresh_url, {"refresh": refresh}, format="json"
-            )
+            response = self.client.post(refresh_url, {"refresh": refresh}, format="json")
 
         assert response.status_code == 200
 

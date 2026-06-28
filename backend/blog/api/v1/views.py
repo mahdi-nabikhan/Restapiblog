@@ -1,6 +1,5 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 from .serializers import *
 from blog.models import *
@@ -375,9 +374,7 @@ class PostListCacheAPIView(GenericAPIView):
         if not posts:
             return Response([])
 
-        serializer = self.serializer_class(
-            posts, many=True, context={"request": request}
-        )
+        serializer = self.serializer_class(posts, many=True, context={"request": request})
         data = serializer.data
         cache.set(cache_kay, data, timeout=60 * 20)
         return Response(data)

@@ -1,6 +1,5 @@
 import pytest
-from django.core.exceptions import ValidationError
-from accounts.models import User, Profile
+from accounts.models import Profile
 from accounts.api.v1.serializers import (
     UserRegistrationSerializer,
     CustomAuthTokenSerializer,
@@ -9,7 +8,6 @@ from accounts.api.v1.serializers import (
     ProfileSerializer,
     ActivationResendSerializer,
 )
-from rest_framework_simplejwt.tokens import RefreshToken
 
 
 @pytest.mark.django_db
@@ -159,9 +157,7 @@ class TestActivationResendSerializer:
         assert serializer.validated_data["user"] == user
 
     def test_email_not_registered(self):
-        serializer = ActivationResendSerializer(
-            data={"email": "nonexistent@example.com"}
-        )
+        serializer = ActivationResendSerializer(data={"email": "nonexistent@example.com"})
         assert not serializer.is_valid()
         assert "email" in serializer.errors
 

@@ -12,9 +12,7 @@ class TestBlogModels:
         assert str(category.name) == "Tech"
 
     def test_post_str(self):
-        user = User.objects.create_user(
-            email="test@example.com", password="password123"
-        )
+        user = User.objects.create_user(email="test@example.com", password="password123")
 
         category = Category.objects.create(name="Tech")
 
@@ -67,9 +65,7 @@ class TestBlogModels:
         assert response.status_code in [200, 301, 302, 403, 401, 404]
 
     def test_comment_model(self):
-        user = User.objects.create_user(
-            email="test@example.com", password="password123"
-        )
+        user = User.objects.create_user(email="test@example.com", password="password123")
 
         category = Category.objects.create(name="Tech")
 

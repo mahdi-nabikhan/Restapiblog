@@ -36,15 +36,11 @@ class TestUserModel:
 class TestProfileModel:
 
     def test_profile_created_on_user_creation(self):
-        user = User.objects.create_user(
-            email="profiletest@example.com", password="pass"
-        )
+        user = User.objects.create_user(email="profiletest@example.com", password="pass")
         profile = Profile.objects.get(user=user)
         assert profile.user == user
 
     def test_profile_str_method(self):
-        user = User.objects.create_user(
-            email="profileuser@example.com", password="pass"
-        )
+        user = User.objects.create_user(email="profileuser@example.com", password="pass")
         profile = Profile.objects.get(user=user)
         assert str(profile) == "profileuser@example.com"

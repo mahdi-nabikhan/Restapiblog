@@ -116,9 +116,7 @@ class TestPostViewSet:
         assert response.data["title"] == post.title
 
     def test_update_post(self, api_client_auth, user):
-        post = Post.objects.create(
-            title="Old Title", content="Old Content", auther=user
-        )
+        post = Post.objects.create(title="Old Title", content="Old Content", auther=user)
         url = reverse("blog:api:post-detail", kwargs={"pk": post.pk})
         data = {
             "title": "New Title",
@@ -130,9 +128,7 @@ class TestPostViewSet:
         assert response.data["title"] == "New Title"
 
     def test_partial_update_post(self, api_client_auth, user):
-        post = Post.objects.create(
-            title="Old Title", content="Old Content", auther=user
-        )
+        post = Post.objects.create(title="Old Title", content="Old Content", auther=user)
         url = reverse("blog:api:post-detail", kwargs={"pk": post.pk})
         data = {
             "title": "Partial New Title",
@@ -142,9 +138,7 @@ class TestPostViewSet:
         assert response.data["title"] == "Partial New Title"
 
     def test_delete_post(self, api_client_auth, user):
-        post = Post.objects.create(
-            title="To be deleted", content="Content", auther=user
-        )
+        post = Post.objects.create(title="To be deleted", content="Content", auther=user)
         url = reverse("blog:api:post-detail", kwargs={"pk": post.pk})
         response = api_client_auth.delete(url)
         assert response.status_code == 204

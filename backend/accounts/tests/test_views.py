@@ -1,5 +1,4 @@
 from unittest.mock import patch
-from mail_templated import EmailMessage
 import jwt
 import pytest
 from django.conf import settings
@@ -174,9 +173,7 @@ class TestActivationApiView:
 
     def test_activate_user_valid_token(self):
         token = RefreshToken.for_user(self.user).access_token
-        url = reverse(
-            "accounts:api-v1:activation-confirm", kwargs={"token": str(token)}
-        )
+        url = reverse("accounts:api-v1:activation-confirm", kwargs={"token": str(token)})
         response = self.client.get(url)
 
         self.user.refresh_from_db()

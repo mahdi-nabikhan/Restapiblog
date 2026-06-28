@@ -1,12 +1,11 @@
 import jwt
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-from mail_templated import EmailMessage
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView, UpdateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import GenericAPIView, UpdateAPIView
 from .serializers import *
 from rest_framework.authtoken import views
 from rest_framework.authtoken.models import Token
@@ -195,9 +194,7 @@ class CustomObtainToken(views.ObtainAuthToken):
         if serializer.is_valid():
             user = serializer.validated_data["user"]
             token, create = Token.objects.get_or_create(user=user)
-            return Response(
-                {"user_id": user.pk, "token": token.key, "email": user.email}
-            )
+            return Response({"user_id": user.pk, "token": token.key, "email": user.email})
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

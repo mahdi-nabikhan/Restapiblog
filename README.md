@@ -4,7 +4,7 @@ A full-stack blog platform built with Django REST Framework (DRF) and React(Reac
 
 ---
 
-## 🚀 Features
+## 🚀 Features.
 
 ### 🔐 Authentication
 - JWT-based authentication (custom + SimpleJWT)

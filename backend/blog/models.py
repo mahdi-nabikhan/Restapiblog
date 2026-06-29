@@ -43,14 +43,22 @@ class Category(models.Model):
 class Comments(models.Model):
     """a model for commnets of a post"""
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE , related_name='comment_owner')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE,related_name='comment_post')
 
     content = models.TextField(max_length=255)
     published = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="replies",
+    )
 
 
 class PostImages(models.Model):

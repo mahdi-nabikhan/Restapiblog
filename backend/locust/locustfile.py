@@ -1,5 +1,5 @@
 from locust import HttpUser, task, between
-
+import random
 
 class AccountUser(HttpUser):
     """

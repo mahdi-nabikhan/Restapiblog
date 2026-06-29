@@ -101,6 +101,12 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating and representing comment objects.
+
+    Automatically associates the authenticated user with newly created
+    comments and provides a nested representation of the parent comment.
+    """
     class Meta:
         model = Comments
         fields = [
@@ -111,20 +117,91 @@ class CommentSerializer(serializers.ModelSerializer):
             "created_at",
             "published",
             "updated_at",
+            "parent"
         ]
         read_only_fields = ("user", "post")
 
     def create(self, validated_data):
+        """
+        Create a new comment and assign the authenticated user as its owner.
+
+        Args:
+            validated_data (dict): Validated serializer data.
+
+        Returns:
+            Comments: The newly created comment instance.
+        """
         request = self.context.get("request")
         validated_data["user"] = request.user
 
         return Comments.objects.create(**validated_data)
+    
+    def to_representation(self, instance):
+        """
+        Customize the serialized representation of a comment.
 
+        Replaces the parent comment primary key with a nested serialized
+        representation. Returns `None` when the comment has no parent.
 
+        Args:
+            instance (Comments): Comment instance to serialize.
+
+        Returns:
+            dict: Serialized comment data.
+        """
+        result = result = super().to_representation(instance)
+        if instance.parent:
+            result["parent"] = CommentDetailSerializer(instance.parent).data
+        else:
+            result["parent"] = None
+
+        return result
+    
+    def validate_parent(self, value):
+        if value is None:
+            return value
+
+        post = self.context["post"]
+
+        if value.post != post:
+         raise serializers.ValidationError(
+                "You cannot reply to a comment from another post."
+            )
+
+        return value
 class CommentDetailSerializer(serializers.ModelSerializer):
+    """
+    Serializer for representing a comment along with its parent comment.
+
+    Produces a recursive nested representation of the parent comment,
+    allowing clients to traverse the comment thread hierarchy.
+    """
     class Meta:
         model = Comments
-        fields = ["content"]
+        fields = ["content","parent"]
+        
+    def to_representation(self, instance):
+        """
+        Return a serialized representation of the comment.
+
+        Replaces the parent comment primary key with its serialized
+        representation. If the comment has no parent, the `parent`
+        field is set to ``None``.
+
+        Args:
+            instance (Comments): The comment instance to serialize.
+
+        Returns:
+            dict: Serialized comment data.
+        """
+        result = result = super().to_representation(instance)
+        if instance.parent:
+            result["parent"] = CommentDetailSerializer(instance.parent).data
+        else:
+            result["parent"] = None
+
+        return result
+        
 
 
 class PostImagesSerializers(serializers.ModelSerializer):

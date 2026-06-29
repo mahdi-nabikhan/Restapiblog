@@ -124,7 +124,16 @@ class CommentSerializer(serializers.ModelSerializer):
 class CommentDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comments
-        fields = ["content"]
+        fields = ["content","parent"]
+    def to_representation(self, instance):
+        result = result = super().to_representation(instance)
+        if instance.parent:
+            result["parent"] = CommentDetailSerializer(instance.parent).data
+        else:
+            result["parent"] = None
+
+        return result
+        
 
 
 class PostImagesSerializers(serializers.ModelSerializer):

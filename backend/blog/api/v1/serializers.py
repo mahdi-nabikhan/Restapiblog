@@ -156,7 +156,19 @@ class CommentSerializer(serializers.ModelSerializer):
             result["parent"] = None
 
         return result
+    
+    def validate_parent(self, value):
+        if value is None:
+            return value
 
+        post = self.context["post"]
+
+        if value.post != post:
+         raise serializers.ValidationError(
+                "You cannot reply to a comment from another post."
+            )
+
+        return value
 class CommentDetailSerializer(serializers.ModelSerializer):
     """
     Serializer for representing a comment along with its parent comment.

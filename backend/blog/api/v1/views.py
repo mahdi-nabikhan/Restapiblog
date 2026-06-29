@@ -236,9 +236,28 @@ class PostAPIActionViewSets(ViewSet):
 
 
 class CommentListAndCreateAPIView(GenericAPIView):
+    """
+    API view for listing and creating comments associated with a specific post.
+
+    Endpoints:
+    - GET: Retrieve all published comments for the specified post.
+    - POST: Create a new comment or a reply for the specified post.
+
+    The authenticated user is automatically assigned as the comment owner.
+    """
     serializer_class = CommentSerializer
 
     def get(self, request, pk):
+        """
+        Retrieve all published comments for the given post.
+
+        Args:
+            request (Request): Incoming HTTP request.
+            pk (int): Primary key of the target post.
+
+        Returns:
+            Response: A list of serialized published comments.
+        """
         comments = Comments.objects.filter(post__pk=pk, published=True)
         serializer = self.serializer_class(
             instance=comments, many=True, context={"request": request}
@@ -246,12 +265,26 @@ class CommentListAndCreateAPIView(GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, pk):
+        """
+        Create a new comment or reply for the given post.
+
+        The target post is determined by the URL parameter, while the
+        authenticated user is assigned automatically by the serializer.
+        If a `parent` field is provided, the comment is created as a reply.
+
+        Args:
+            request (Request): Incoming HTTP request containing comment data.
+            pk (int): Primary key of the target post.
+
+        Returns:
+            Response: Success message on creation or validation errors.
+        """
         data = request.data
         post = Post.objects.get(pk=pk)
         if not post:
             return Response({"message": "cant find any post with id you send"})
 
-        serializer = self.serializer_class(data=data, context={"request": request})
+        serializer = self.serializer_class(data=data, context={"request": request,"post":post})
         if serializer.is_valid():
             serializer.save(post=post)
             return Response(
@@ -262,9 +295,26 @@ class CommentListAndCreateAPIView(GenericAPIView):
 
 
 class CommentDetailAndDeleteAPIView(GenericAPIView):
+    """
+    API view for updating and deleting a specific comment.
+
+    Endpoints:
+    - PUT: Update an existing comment.
+    - DELETE: Remove a comment from the database.
+    """
     serializer_class = CommentDetailSerializer
 
     def put(self, request, pk):
+        """
+        Update the specified comment.
+
+        Args:
+            request (Request): Incoming HTTP request containing updated comment data.
+            pk (int): Primary key of the target comment.
+
+        Returns:
+            Response: Success message on update or validation errors.
+        """
         obj = Comments.objects.get(pk=pk)
         serializer = self.serializer_class(instance=obj, data=request.data)
         if serializer.is_valid():
@@ -277,6 +327,17 @@ class CommentDetailAndDeleteAPIView(GenericAPIView):
             return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, pk):
+        """
+        Delete the specified comment.
+
+        Args:
+            request (Request): Incoming HTTP request.
+            pk (int): Primary key of the target comment.
+
+        Returns:
+            Response: Success message if the comment is deleted, otherwise an
+            error response if the comment does not exist.
+        """
         obj = obj = Comments.objects.get(pk=pk)
         if obj:
             obj.delete()
@@ -292,9 +353,24 @@ class CommentDetailAndDeleteAPIView(GenericAPIView):
 
 
 class UserPostListApiView(GenericAPIView):
+    """
+    API view for retrieving posts created by the authenticated user.
+
+    Endpoint:
+    - GET: Return a list of all posts owned by the current authenticated user.
+    """
     serializer_class = PostSerializer
 
     def get(self, request):
+        """
+        Retrieve all posts created by the authenticated user.
+
+        Args:
+            request (Request): Incoming HTTP request.
+
+        Returns:
+            Response: A list of serialized posts belonging to the current user.
+        """
         obj = Post.objects.filter(auther=request.user)
         serializer = self.serializer_class(
             instance=obj, many=True, context={"request": request}

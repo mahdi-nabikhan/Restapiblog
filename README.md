@@ -1,6 +1,6 @@
 # 📌 RestApiBlog
 
-A full-stack blog platform built with Django REST Framework (DRF) and React, featuring authentication, comments system, caching, pagination, and modern backend architecture.
+A full-stack blog platform built with Django REST Framework (DRF) and React(React Query), featuring authentication, comments system, caching, pagination, and modern backend architecture.
 
 ---
 

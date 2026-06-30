@@ -223,6 +223,25 @@ class ActivationResendSerializer(serializers.Serializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Profile model.
+
+    This serializer is responsible for serializing and deserializing
+    `Profile` instances. All model fields are included, while the
+    `user` field is marked as read-only to prevent clients from
+    modifying the profile ownership.
+
+    Meta:
+        model:
+            The Profile model associated with this serializer.
+
+        fields:
+            Includes all fields defined on the Profile model.
+
+        read_only_fields:
+            Prevents modification of the `user` field during create
+            and update operations.
+    """
     class Meta:
         model = Profile
         fields = "__all__"

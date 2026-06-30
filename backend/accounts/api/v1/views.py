@@ -676,6 +676,23 @@ class ActivationResendApiView(GenericAPIView):
 
 
 class GetUserAPIView(GenericAPIView):
+    """
+    Retrieve the authenticated user's basic information.
+
+    This endpoint returns the ID and email address of the currently
+    authenticated user. Authentication is required to access this resource.
+
+    Permissions:
+        - IsAuthenticated
+
+    Methods:
+        GET:
+            Returns the authenticated user's basic account information.
+
+    Returns:
+        - 200 OK: A JSON object containing the user's `id` and `email`.
+        - 401 Unauthorized: If the user is not authenticated.
+    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -690,6 +707,31 @@ class GetUserAPIView(GenericAPIView):
 
 
 class ProfileDetail(GenericAPIView):
+    """
+    Retrieve and update the authenticated user's profile.
+
+    This endpoint allows the currently authenticated user to view and modify
+    their profile information. The profile is retrieved using the authenticated
+    `request.user` instance.
+
+    Methods:
+        GET:
+            Returns the authenticated user's profile data.
+
+        PUT:
+            Updates the authenticated user's profile with the provided data.
+            Returns a success message if the update is successful; otherwise,
+            returns serializer validation errors.
+
+    Returns:
+        GET:
+            - 200 OK: Profile data.
+
+        PUT:
+            - 200 OK: Profile updated successfully.
+            - 404 Not Found: Validation failed (note: 400 Bad Request is
+              generally more appropriate for serializer validation errors).
+    """
     serializer_class = ProfileSerializer
 
     def get(self, request):
@@ -714,6 +756,18 @@ class ProfileDetail(GenericAPIView):
 
 
 class CustomJwtRemoveCookies(GenericAPIView):
+    """
+    Handle user logout by removing JWT authentication cookies.
+
+    This endpoint invalidates the client's authenticated session by deleting
+    the `access` and `refresh` JWT cookies from the response. It does not
+    blacklist or revoke the refresh token on the server side; it only removes
+    the cookies stored in the client's browser.
+
+    Returns:
+        Response: HTTP 204 No Content after successfully deleting the
+        authentication cookies.
+    """
 
     def post(self, request):
         res = Response("user successfully loged out", status=status.HTTP_204_NO_CONTENT)

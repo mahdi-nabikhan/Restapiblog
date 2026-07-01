@@ -116,7 +116,7 @@ services:
   # LOGSTASH (mirror aligned)
   # ======================
   logstash:
-    image: mirror2.chabokan.net/logstash:9.4.2
+    image: mirror2.chabokan.net/logstash:8.17.0
     container_name: logstash
     depends_on:
       - elasticsearch

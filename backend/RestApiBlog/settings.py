@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "mail_templated",
     "corsheaders",
-    # 'django_elasticsearch_dsl'
+    'django_elasticsearch_dsl'
 ]
 
 MIDDLEWARE = [

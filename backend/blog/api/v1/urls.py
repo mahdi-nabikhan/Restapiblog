@@ -21,5 +21,6 @@ urlpatterns = [
     path("user/post/", UserPostListApiView.as_view(), name="user-posts"),
     path("post/list/cache/", PostListCacheAPIView.as_view(), name="post-cache"),
     path("img/post/<int:pk>/", PostImageCreateAndListAPIView.as_view(), name="img_post"),
+    path('search/',SearchPostApiView.as_view(),name='search'),
     path("", include(router.urls)),
 ]

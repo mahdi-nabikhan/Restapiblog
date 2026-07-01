@@ -209,3 +209,13 @@ class PostImagesSerializers(serializers.ModelSerializer):
         model = PostImages
         fields = "__all__"
         read_only_fields = ("post",)
+
+
+
+
+from rest_framework import serializers
+
+
+class SearchPostSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    title = serializers.CharField()

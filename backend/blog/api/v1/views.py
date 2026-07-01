@@ -11,7 +11,7 @@ from .paginations import DefaultPagination
 from django.core.cache import cache
 import random
 from django.shortcuts import get_object_or_404
-
+from documents import PostDocument
 
 class PostListView(GenericAPIView):
     """
@@ -518,3 +518,31 @@ class PostImageCreateAndListAPIView(GenericAPIView):
             )
         else:
             return Response(serializers.errors, status=status.HTTP_404_NOT_FOUND)
+
+class SearchPostApiView(GenericAPIView):
+    serializer_class = SearchPostSerializer
+    
+    
+    def get(self,request,*args,**kwargs):
+        query = request.query_params.get('q','')
+        search = PostDocument.search()
+        if query:
+            search = search.query(
+                'multi_match',
+                query = query,
+                fields = [
+                    'title'
+                ],
+                fuzziness = "AUTO"
+            )
+            response = search.execute()
+            results = [ 
+                      {
+                          "id":hit.id,
+                          "title":hit.title
+                      }
+                      for hit in response
+                      ]
+            serializer = self.serializer_class(isinstance=results,many=True)
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        

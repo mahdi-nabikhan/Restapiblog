@@ -205,6 +205,13 @@ class CommentDetailSerializer(serializers.ModelSerializer):
 
 
 class PostImagesSerializers(serializers.ModelSerializer):
+    """
+    Serializer for managing post image objects.
+
+    Serializes all fields of the PostImages model while preventing direct
+    modification of the associated post. The `post` field is read-only and
+    is intended to be assigned automatically by the corresponding view.
+    """
     class Meta:
         model = PostImages
         fields = "__all__"
@@ -213,9 +220,16 @@ class PostImagesSerializers(serializers.ModelSerializer):
 
 
 
-from rest_framework import serializers
+
 
 
 class SearchPostSerializer(serializers.Serializer):
+    """
+    Serializer for Elasticsearch search results.
+
+    Represents the minimal post information returned by the search endpoint,
+    including the post identifier and title.
+    """
+    
     id = serializers.IntegerField()
     title = serializers.CharField()

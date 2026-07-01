@@ -520,6 +520,25 @@ class PostImageCreateAndListAPIView(GenericAPIView):
             return Response(serializers.errors, status=status.HTTP_404_NOT_FOUND)
 
 class SearchPostApiView(GenericAPIView):
+    """
+    Search posts using Elasticsearch.
+
+    This endpoint performs a full-text search on the indexed `Post` documents
+    based on the `title` field. It utilizes Elasticsearch's `multi_match`
+    query with automatic fuzzy matching to handle misspellings and partial
+    user input.
+
+    Query Parameters:
+        q (str): Search keyword.
+
+    Returns:
+        200 OK:
+            A list of matching posts containing their `id` and `title`.
+
+    Notes:
+        - Uses Elasticsearch instead of querying the PostgreSQL database.
+        - Fuzziness is set to `AUTO` to improve search accuracy.
+    """
     serializer_class = SearchPostSerializer
     
     
@@ -543,6 +562,6 @@ class SearchPostApiView(GenericAPIView):
                       }
                       for hit in response
                       ]
-            serializer = self.serializer_class(isinstance=results,many=True)
+            serializer = self.serializer_class(instance=results,many=True)
             return Response(serializer.data,status=status.HTTP_200_OK)
         

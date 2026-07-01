@@ -72,7 +72,7 @@ export default function Navbar() {
       setSearchLoading(true);
 
       const res = await fetch(
-        `${BACKEND_URL}/blog/api/v1/post/search/?q=${value}`,
+        `${BACKEND_URL}/blog/api/v1/search/?q=${value}`,
         {
           method: "GET",
           credentials: "include",

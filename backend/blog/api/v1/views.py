@@ -520,6 +520,7 @@ class PostImageCreateAndListAPIView(GenericAPIView):
             return Response(serializers.errors, status=status.HTTP_404_NOT_FOUND)
 
 class SearchPostApiView(GenericAPIView):
+    serializer_class = SearchPostSerializer
     
     
     def get(self,request,*args,**kwargs):
@@ -542,5 +543,6 @@ class SearchPostApiView(GenericAPIView):
                       }
                       for hit in response
                       ]
-            return Response(results)
+            serializer = self.serializer_class(isinstance=results,many=True)
+            return Response(serializer.data,status=status.HTTP_200_OK)
         
